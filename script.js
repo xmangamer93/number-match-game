@@ -120,7 +120,7 @@ function render() {
   $("goalText").textContent = "اجمع " + digits(c.goal) + " نقطة";
   $("goalProgress").textContent = digits(pct) + "٪";
   $("goalBar").style.width = pct + "%";
-  $("undoBtn").disabled = !history.length;
+  $("undoBtn").disabled = !history.length;\n  $("removeBtn").disabled = selected.length < 2;
   $("levelStars").textContent = "★".repeat(progress.stars[level]||0) + "☆".repeat(3-(progress.stars[level]||0));
 }
 
@@ -165,33 +165,49 @@ function checkState() {
 function choose(index) {
   if (over || cells[index] == null) return;
   hintPair = null;
-  if (!selected.length) {
-    selected = [index];
+  if (selected.includes(index)) {
+    selected = selected.filter(i => i !== index);
     render();
     return;
   }
-  if (selected[0] === index) {
-    selected = [];
+  if (!selected.length) {
+    selected = [index];
+    setStatus("اختار أرقامًا متساوية ومتجاورة، أو زوجًا مجموعهما ١٠.");
     render();
     return;
   }
   const first = selected[0];
-  if (Engine.canMatch(cells,first,index,COLS)) {
-    saveHistory();
-    cells[first] = null;
-    cells[index] = null;
-    score += 10;
-    moves++;
-    while (cells.length && cells[cells.length-1] == null) cells.pop();
-    selected = [];
-    setStatus("برافو! +١٠ نقاط 🎈");
-    render();
-    checkState();
+  const sameGroup = selected.every(i => cells[i] === cells[first]) &&
+    cells[index] === cells[first] &&
+    selected.some(i => Engine.adjacent(i,index,COLS));
+  const validPair = selected.length === 1 &&
+    Engine.canMatch(cells,first,index,COLS);
+  if (sameGroup || validPair) {
+    selected.push(index);
+    setStatus(selected.length > 2
+      ? "مجموعة ممتازة! اضغط «حذف المحدد» لإزالتها."
+      : "تم التحديد. تقدر تضيف رقمًا مجاورًا مطابقًا أو تحذف المحدد.");
   } else {
     selected = [index];
-    setStatus("اختار رقمين متوافقين والطريق بينهم فاضي.",true);
-    render();
+    setStatus("لازم الرقم يكون مطابقًا ومجاورًا للمجموعة، أو زوجًا صالحًا.",true);
   }
+  render();
+}
+
+function removeSelected() {
+  if (over || selected.length < 2) return;
+  const removed = selected.length;
+  saveHistory();
+  selected.forEach(index => { cells[index] = null; });
+  score += (removed - 1) * 10;
+  moves++;
+  while (cells.length && cells[cells.length-1] == null) cells.pop();
+  selected = [];
+  hintPair = null;
+  setStatus("برافو! أزلت " + digits(removed) + " أرقام وكسبت " +
+    digits((removed-1)*10) + " نقطة 🎈");
+  render();
+  checkState();
 }
 
 function startLevel(n) {
@@ -208,7 +224,7 @@ function startLevel(n) {
   const w = worldFor(n);
   $("worldName").textContent = w.icon + " " + w.name;
   $("levelTitle").textContent = "المرحلة " + digits(n);
-  setStatus("اختار رقمين متساويين أو مجموعهما ١٠. بالتوفيق!");
+  setStatus("اختار رقمين متساويين أو أكتر متجاورين (حتى قطريًا)، أو زوجًا مجموعهما ١٠.");
   show("game");
   render();
 }
