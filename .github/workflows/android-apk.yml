@@ -8,7 +8,7 @@ on:
       - 'style.css'
       - 'script.js'
       - 'package.json'
-      - 'capacitor.config.json'
+      - 'capacitor.config.json'\n      - 'manifest.webmanifest'\n      - 'icon.svg'\n      - 'sw.js'
       - '.github/workflows/android-apk.yml'
 jobs:
   build:
