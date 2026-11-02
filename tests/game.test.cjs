@@ -55,6 +55,40 @@ test("adjacency does not wrap across the end of a row", () => {
 });
 
 
+test("touch gesture selects tiles and commits exactly once on release", () => {
+  const selected = [];
+  let commits = 0;
+  const gesture = Engine.createPointerGesture(index => selected.push(index), () => commits++);
+  assert.equal(gesture.start(7, 10), true);
+  assert.equal(gesture.move(7, 10), false);
+  assert.equal(gesture.move(7, 11), true);
+  assert.equal(gesture.move(8, 12), false, "another pointer cannot hijack the gesture");
+  assert.equal(gesture.end(8), false, "another pointer cannot commit the gesture");
+  assert.equal(gesture.end(7), true);
+  assert.deepEqual(selected, [10, 11]);
+  assert.equal(commits, 1);
+  assert.equal(gesture.end(7), false, "release cannot commit twice");
+  assert.equal(commits, 1);
+});
+
+test("cancelled touch gesture never commits a deletion", () => {
+  let commits = 0;
+  const gesture = Engine.createPointerGesture(() => {}, () => commits++);
+  assert.equal(gesture.start(3, 4), true);
+  assert.equal(gesture.cancel(3), true);
+  assert.equal(gesture.end(3), false);
+  assert.equal(commits, 0);
+});
+
+test("touch gesture handlers are connected to board pointer release", () => {
+  const root = path.resolve(__dirname, "..");
+  const script = fs.readFileSync(path.join(root, "script.js"), "utf8");
+  assert.match(script, /Engine\.createPointerGesture/);
+  assert.match(script, /board\.addEventListener\("pointerup",finishPointerSelection\)/);
+  assert.match(script, /document\.addEventListener\("pointermove",updatePointerSelection/);
+  assert.match(script, /if \(selected\.length >= 2\) removeSelected\(\)/);
+});
+
 test("every generated stage has a guaranteed legal move and requested tile count", () => {
   for (let level=1;level<=30;level++) {
     const count=36+Math.floor((level-1)/5)*9;
