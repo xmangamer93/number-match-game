@@ -120,7 +120,8 @@ function render() {
   $("goalText").textContent = "اجمع " + digits(c.goal) + " نقطة";
   $("goalProgress").textContent = digits(pct) + "٪";
   $("goalBar").style.width = pct + "%";
-  $("undoBtn").disabled = !history.length;\n  $("removeBtn").disabled = selected.length < 2;
+  $("undoBtn").disabled = !history.length;
+  $("removeBtn").disabled = selected.length < 2;
   $("levelStars").textContent = "★".repeat(progress.stars[level]||0) + "☆".repeat(3-(progress.stars[level]||0));
 }
 
