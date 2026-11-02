@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="لعبة مطابقة الأرقام: احذف الأرقام المتشابهة أو التي مجموعها 10.">
+  <title>تحدي الأرقام | Number Match</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <div><p class="eyebrow">لعبة ذكاء وتركيز</p><h1>تحدي الأرقام</h1><p class="subtitle">طابق رقمين متساويين أو اجعل مجموعهما ١٠</p></div>
+      <div class="score-card"><span>النقاط</span><strong id="score">٠</strong><small>أفضل نتيجة: <b id="best">٠</b></small></div>
+    </header>
+    <section class="toolbar" aria-label="أدوات اللعبة">
+      <button id="newGame" class="primary">لعبة جديدة</button>
+      <button id="hintBtn">تلميح</button>
+      <button id="undoBtn" disabled>تراجع</button>
+      <button id="addBtn">إضافة أرقام</button>
+    </section>
+    <p id="status" class="status" role="status" aria-live="polite">اختر رقمين متوافقين لإزالتهما.</p>
+    <section class="board-wrap">
+      <div id="board" class="board" aria-label="لوحة الأرقام"></div>
+    </section>
+    <footer><span>الاتصال: أفقي أو رأسي أو قطري بخط مستقيم، مع عبور الخانات الفارغة.</span><span id="moves">الحركات المتاحة: —</span></footer>
+  </main>
+  <dialog id="endDialog"><div class="dialog-content"><h2 id="endTitle">انتهت اللعبة</h2><p id="endText"></p><button id="playAgain" class="primary">العب مرة أخرى</button></div></dialog>
+  <script src="script.js"></script>
+</body>
+</html>
