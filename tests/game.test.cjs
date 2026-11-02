@@ -51,7 +51,7 @@ test("equal numbers match only when immediately adjacent, including diagonals", 
 
 test("adjacency does not wrap across the end of a row", () => {
   assert.equal(Engine.adjacent(2,3,3),false);
-  assert.equal(Engine.adjacent(0,4,3),false);
+  assert.equal(Engine.adjacent(0,5,3),false);
 });
 
 
