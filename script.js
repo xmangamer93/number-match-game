@@ -288,6 +288,7 @@ board.addEventListener("pointerdown",event=>{
   if (!tile || tile.classList.contains("empty") || over) return;
   pointerSelecting = true;
   pointerId = event.pointerId;
+  if (board.setPointerCapture) board.setPointerCapture(event.pointerId);
   pointerLastIndex = Number(tile.dataset.index);
   choose(pointerLastIndex);
   event.preventDefault();
