@@ -288,35 +288,48 @@ board.addEventListener("pointerdown",event=>{
   if (!tile || tile.classList.contains("empty") || over) return;
   pointerSelecting = true;
   pointerId = event.pointerId;
-  if (board.setPointerCapture) board.setPointerCapture(event.pointerId);
+  if (board.setPointerCapture) {
+    try { board.setPointerCapture(event.pointerId); } catch (_) { /* document listeners remain as fallback */ }
+  }
   pointerLastIndex = Number(tile.dataset.index);
   choose(pointerLastIndex);
   event.preventDefault();
 });
-board.addEventListener("pointermove",event=>{
+function updatePointerSelection(event) {
   if (!pointerSelecting || event.pointerId !== pointerId) return;
   const underPointer = document.elementFromPoint(event.clientX,event.clientY);
-  const tile = underPointer && underPointer.closest ? underPointer.closest("#board .tile") : null;
+  const tile = underPointer && underPointer.closest
+    ? underPointer.closest("#board .tile")
+    : null;
   if (!tile || tile.classList.contains("empty")) return;
   const index = Number(tile.dataset.index);
-  if (index !== pointerLastIndex) {
+  if (Number.isInteger(index) && index !== pointerLastIndex) {
     pointerLastIndex = index;
     choose(index);
   }
-});
-document.addEventListener("pointerup",event=>{
+}
+function finishPointerSelection(event) {
   if (!pointerSelecting || event.pointerId !== pointerId) return;
+  // Clear the gesture state before rendering/removing tiles so a second
+  // pointer event cannot commit the same selection twice.
   pointerSelecting = false;
   pointerId = null;
   pointerLastIndex = null;
   if (selected.length >= 2) removeSelected();
-});
-document.addEventListener("pointercancel",event=>{
+}
+function cancelPointerSelection(event) {
   if (event.pointerId !== pointerId) return;
   pointerSelecting = false;
   pointerId = null;
   pointerLastIndex = null;
-});
+}
+document.addEventListener("pointermove",updatePointerSelection,{passive:true});
+// Pointer capture retargets pointerup to the board. Listen there as well as
+// on document so Android WebView and desktop browsers both commit reliably.
+board.addEventListener("pointerup",finishPointerSelection);
+document.addEventListener("pointerup",finishPointerSelection);
+board.addEventListener("pointercancel",cancelPointerSelection);
+document.addEventListener("pointercancel",cancelPointerSelection);
 
 $("addBtn").addEventListener("click",addNumbers);
 
