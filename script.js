@@ -11,7 +11,7 @@ const worlds = [
 ];
 let progress = loadProgress(), level = 1, cells = [], selected = [], score = 0;
 let moves = 0, history = [], over = false, hintPair = null;
-let pointerSelecting = false, pointerId = null, pointerLastIndex = null;
+
 
 const digits = n => new Intl.NumberFormat("ar-EG").format(n);
 
@@ -218,9 +218,7 @@ function startLevel(n) {
   const c = cfg(n);
   cells = Engine.createBoard(c.count,n);
   selected = [];
-  pointerSelecting = false;
-  pointerId = null;
-  pointerLastIndex = null;
+  pointerGesture.reset();
   score = 0;
   moves = 0;
   history = [];
@@ -283,49 +281,37 @@ $("hintBtn").addEventListener("click",()=>{
 });
 
 const board = $("board");
+const pointerGesture = Engine.createPointerGesture(
+  index => choose(index),
+  () => { if (selected.length >= 2) removeSelected(); }
+);
 board.addEventListener("pointerdown",event=>{
   const tile = event.target.closest(".tile");
   if (!tile || tile.classList.contains("empty") || over) return;
-  pointerSelecting = true;
-  pointerId = event.pointerId;
+  const index = Number(tile.dataset.index);
+  if (!pointerGesture.start(event.pointerId,index)) return;
+  // The board stays mounted while render() replaces individual tiles.
   if (board.setPointerCapture) {
-    try { board.setPointerCapture(event.pointerId); } catch (_) { /* document listeners remain as fallback */ }
+    try { board.setPointerCapture(event.pointerId); } catch (_) { /* document fallback handles the gesture */ }
   }
-  pointerLastIndex = Number(tile.dataset.index);
-  choose(pointerLastIndex);
   event.preventDefault();
 });
 function updatePointerSelection(event) {
-  if (!pointerSelecting || event.pointerId !== pointerId) return;
   const underPointer = document.elementFromPoint(event.clientX,event.clientY);
   const tile = underPointer && underPointer.closest
     ? underPointer.closest("#board .tile")
     : null;
   if (!tile || tile.classList.contains("empty")) return;
-  const index = Number(tile.dataset.index);
-  if (Number.isInteger(index) && index !== pointerLastIndex) {
-    pointerLastIndex = index;
-    choose(index);
-  }
+  pointerGesture.move(event.pointerId,Number(tile.dataset.index));
 }
 function finishPointerSelection(event) {
-  if (!pointerSelecting || event.pointerId !== pointerId) return;
-  // Clear the gesture state before rendering/removing tiles so a second
-  // pointer event cannot commit the same selection twice.
-  pointerSelecting = false;
-  pointerId = null;
-  pointerLastIndex = null;
-  if (selected.length >= 2) removeSelected();
+  pointerGesture.end(event.pointerId);
 }
 function cancelPointerSelection(event) {
-  if (event.pointerId !== pointerId) return;
-  pointerSelecting = false;
-  pointerId = null;
-  pointerLastIndex = null;
+  pointerGesture.cancel(event.pointerId);
 }
 document.addEventListener("pointermove",updatePointerSelection,{passive:true});
-// Pointer capture retargets pointerup to the board. Listen there as well as
-// on document so Android WebView and desktop browsers both commit reliably.
+// Captured pointerup is delivered to the board; document is a fallback.
 board.addEventListener("pointerup",finishPointerSelection);
 document.addEventListener("pointerup",finishPointerSelection);
 board.addEventListener("pointercancel",cancelPointerSelection);
