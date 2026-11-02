@@ -2,7 +2,7 @@
 "use strict";
 const $ = id => document.getElementById(id);
 const Engine = window.NumberGameEngine;
-const COLS = 9, MAX_CELLS = 9 * 18, TOTAL = 30;
+const COLS = 9, MAX_CELLS = 9 * 24, TOTAL = 30;
 const STORE = "numberJourneyProgressV2";
 const worlds = [
   {name:"عالم الحلوى",icon:"🍭",from:1,to:10},
