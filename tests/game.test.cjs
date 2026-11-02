@@ -71,6 +71,27 @@ test("touch gesture selects tiles and commits exactly once on release", () => {
   assert.equal(commits, 1);
 });
 
+test("two separate taps commit the selected pair on the second release", () => {
+  const selected = [];
+  let removals = 0;
+  const gesture = Engine.createPointerGesture(
+    index => selected.push(index),
+    () => {
+      if (selected.length >= 2) {
+        removals++;
+        selected.length = 0;
+      }
+    }
+  );
+  assert.equal(gesture.start(1, 20), true);
+  assert.equal(gesture.end(1), true);
+  assert.equal(removals, 0, "the first tap only selects");
+  assert.equal(gesture.start(2, 21), true);
+  assert.equal(gesture.end(2), true);
+  assert.equal(removals, 1, "the second tap releases and removes the pair");
+  assert.deepEqual(selected, []);
+});
+
 test("cancelled touch gesture never commits a deletion", () => {
   let commits = 0;
   const gesture = Engine.createPointerGesture(() => {}, () => commits++);
