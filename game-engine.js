@@ -40,9 +40,9 @@
   }
 
   function canMatch(cells, a, b, columns) {
-    return a !== b && pairValue(cells[a], cells[b]) &&
-      (aligned(cells, a, b, columns) || sequential(cells, a, b) ||
-       (cells[a] === cells[b] && adjacent(a, b, columns)));
+    if (a === b || !pairValue(cells[a], cells[b])) return false;
+    if (cells[a] === cells[b]) return adjacent(a, b, columns);
+    return aligned(cells, a, b, columns) || sequential(cells, a, b);
   }
 
   function findMove(cells, columns) {
