@@ -1,17 +1,1 @@
-{
-  "name": "number-journey",
-  "version": "1.1.0",
-  "private": true,
-  "description": "Arabic Number Match puzzle game",
-  "scripts": {
-    "test": "node --test",
-    "android:sync": "mkdir -p www && cp index.html style.css script.js game-engine.js manifest.webmanifest icon.svg www/ && npx cap sync android"
-  },
-  "dependencies": {
-    "@capacitor/android": "^7.4.3",
-    "@capacitor/core": "^7.4.3"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "^7.4.3"
-  }
-}
+{"name":"number-journey-2048","version":"2.0.0","private":true,"description":"Arabic 2048 number merge puzzle game","scripts":{"test":"node --test","android:sync":"mkdir -p www && cp index.html style.css script.js game-engine.js manifest.webmanifest icon.svg www/ && npx cap sync android"},"dependencies":{"@capacitor/android":"^7.4.3","@capacitor/core":"^7.4.3"},"devDependencies":{"@capacitor/cli":"^7.4.3"}}
