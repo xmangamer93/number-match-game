@@ -11,8 +11,8 @@
 <header class="top"><div class="brand"><span class="logo">2048</span><div><h1>رحلة الأرقام</h1><p>ادمج الأرقام واصل إلى 2048</p></div></div><button id="newGame" class="new">لعبة جديدة ↻</button></header>
 <section class="scores"><div class="score"><span>النقاط</span><b id="score">٠</b></div><div class="score"><span>أفضل نتيجة</span><b id="best">٠</b></div></section>
 <section class="goal"><div><b>🎯 هدفك: 2048</b><span id="message">حرّك المربعات لدمج الأرقام المتساوية</span></div><div class="goal-chip">2048</div></section>
-<div class="board-frame"><div id="board" class="board" role="grid" aria-label="لوحة لعبة 2048"></div><div id="overlay" class="overlay hidden"><h2 id="overlayTitle">انتهت اللعبة</h2><p id="overlayText"></p><button id="overlayRestart" class="new">العب مرة أخرى</button></div></div>
-<div class="controls"><button id="undo" class="control">↶ تراجع</button><button id="hint" class="control">💡 طريقة اللعب</button></div>
+<div class="board-frame"><div id="board" class="board" role="grid" aria-label="لوحة لعبة 2048"></div><div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="overlayTitle"><h2 id="overlayTitle">انتهت اللعبة</h2><p id="overlayText"></p><button id="continueGame" class="new hidden">متابعة اللعب</button><button id="overlayRestart" class="new">العب مرة أخرى</button></div></div>
+<div class="controls"><button id="undo" class="control" disabled>↶ تراجع</button><button id="hint" class="control">💡 طريقة اللعب</button></div>
 <p class="instructions"><b>طريقة اللعب</b><br>اسحب اللوحة في الاتجاه الذي تريده، أو استخدم الأسهم على لوحة المفاتيح. عندما يلتقي رقمان متساويان يندمجان في رقم مضاعف. حاول الوصول إلى <strong>2048</strong>!</p>
 <footer>✨ كل حركة تقرّبك من الهدف</footer>
 </main>
