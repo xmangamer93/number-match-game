@@ -1,4 +1,4 @@
-const CACHE="number-journey-v2";
+const CACHE="number-journey-v3";
 const ASSETS=["./","./index.html","./style.css","./game-engine.js","./script.js","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
