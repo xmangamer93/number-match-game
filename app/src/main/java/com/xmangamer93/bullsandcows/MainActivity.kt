@@ -128,7 +128,7 @@ fun BullsAndCowsApp() {
                                             in '٠'..'٩' -> ('0'.code + (c.code - '٠'.code)).toChar()
                                             in '۰'..'۹' -> ('0'.code + (c.code - '۰'.code)).toChar()
                                             else -> null
-                                        }.takeIf { it.isDigit() }
+                                        }?.takeIf { it.isDigit() }
                                     }.joinToString("").take(4)
                                     message = ""
                                 },
