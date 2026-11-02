@@ -125,7 +125,7 @@ $("nextBtn").addEventListener("click",()=>{ if (level < TOTAL) { const d=$("resu
 $("restartBtn").addEventListener("click",()=>startLevel(level));
 $("hintBtn").addEventListener("click",()=>{ const pair=findMove(); if (!pair) { setStatus("مفيش حركة ظاهرة؛ أضف صف أرقام جديد.",true); return; } selected=[]; hintPair=pair; setStatus("التلميح: الرقمين اللي عليهم لمعة ينفع يتشالوا 💡"); render(); });
 const board = $("board");
-const pointerGesture = Engine.createPointerGesture(index=>choose(index),()=>{ if (selected.length>=2) removeSelected(); });
+const pointerGesture = Engine.createPointerGesture(index=>choose(index),()=>{ if (selected.length >= 2) removeSelected(); });
 board.addEventListener("pointerdown",event=>{
   const tile = event.target.closest && event.target.closest(".tile");
   if (!tile || tile.classList.contains("empty") || over) return;
