@@ -11,6 +11,7 @@ const worlds = [
 ];
 let progress = loadProgress(), level = 1, cells = [], selected = [], score = 0;
 let moves = 0, history = [], over = false, hintPair = null;
+let pointerSelecting = false, pointerId = null, pointerLastIndex = null;
 
 const digits = n => new Intl.NumberFormat("ar-EG").format(n);
 
@@ -99,6 +100,7 @@ function render() {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "tile";
+    b.dataset.index = String(index);
     b.setAttribute("aria-label",value==null?"خانة فارغة":"الرقم "+value);
     if (value == null) {
       b.classList.add("empty");
@@ -106,7 +108,7 @@ function render() {
       b.tabIndex = -1;
     } else {
       b.textContent = digits(value);
-      b.addEventListener("click",()=>choose(index));
+      b.addEventListener("click",event=>{ if (event.detail === 0) choose(index); });
     }
     if (selected.includes(index)) b.classList.add("selected");
     if (hintPair && hintPair.includes(index)) b.classList.add("hinted");
@@ -121,7 +123,6 @@ function render() {
   $("goalProgress").textContent = digits(pct) + "٪";
   $("goalBar").style.width = pct + "%";
   $("undoBtn").disabled = !history.length;
-  $("removeBtn").disabled = selected.length < 2;
   $("levelStars").textContent = "★".repeat(progress.stars[level]||0) + "☆".repeat(3-(progress.stars[level]||0));
 }
 
@@ -186,8 +187,8 @@ function choose(index) {
   if (sameGroup || validPair) {
     selected.push(index);
     setStatus(selected.length > 2
-      ? "مجموعة ممتازة! اضغط «حذف المحدد» لإزالتها."
-      : "تم التحديد. تقدر تضيف رقمًا مجاورًا مطابقًا أو تحذف المحدد.");
+      ? "مجموعة ممتازة! ارفع صباعك لحذف الأرقام المحددة تلقائيًا."
+      : "تم التحديد. اسحب على أرقام مطابقة ومتجاورة، وارفع صباعك للحذف.");
   } else {
     selected = [index];
     setStatus("لازم الرقم يكون مطابقًا ومجاورًا للمجموعة، أو زوجًا صالحًا.",true);
@@ -217,6 +218,9 @@ function startLevel(n) {
   const c = cfg(n);
   cells = Engine.createBoard(c.count,n);
   selected = [];
+  pointerSelecting = false;
+  pointerId = null;
+  pointerLastIndex = null;
   score = 0;
   moves = 0;
   history = [];
@@ -277,8 +281,44 @@ $("hintBtn").addEventListener("click",()=>{
   setStatus("التلميح: الرقمين اللي عليهم لمعة ينفع يتشالوا 💡");
   render();
 });
+
+const board = $("board");
+board.addEventListener("pointerdown",event=>{
+  const tile = event.target.closest(".tile");
+  if (!tile || tile.classList.contains("empty") || over) return;
+  pointerSelecting = true;
+  pointerId = event.pointerId;
+  pointerLastIndex = Number(tile.dataset.index);
+  choose(pointerLastIndex);
+  event.preventDefault();
+});
+board.addEventListener("pointermove",event=>{
+  if (!pointerSelecting || event.pointerId !== pointerId) return;
+  const underPointer = document.elementFromPoint(event.clientX,event.clientY);
+  const tile = underPointer && underPointer.closest ? underPointer.closest("#board .tile") : null;
+  if (!tile || tile.classList.contains("empty")) return;
+  const index = Number(tile.dataset.index);
+  if (index !== pointerLastIndex) {
+    pointerLastIndex = index;
+    choose(index);
+  }
+});
+document.addEventListener("pointerup",event=>{
+  if (!pointerSelecting || event.pointerId !== pointerId) return;
+  pointerSelecting = false;
+  pointerId = null;
+  pointerLastIndex = null;
+  if (selected.length >= 2) removeSelected();
+});
+document.addEventListener("pointercancel",event=>{
+  if (event.pointerId !== pointerId) return;
+  pointerSelecting = false;
+  pointerId = null;
+  pointerLastIndex = null;
+});
+
 $("addBtn").addEventListener("click",addNumbers);
-$("removeBtn").addEventListener("click",removeSelected);
+
 $("undoBtn").addEventListener("click",()=>{
   const previous = history.pop();
   if (!previous) return;
