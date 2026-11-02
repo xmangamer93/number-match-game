@@ -2,19 +2,33 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#182d68"><meta name="description" content="لعبة 2048 - ادمج الأرقام حتى تصل إلى 2048">
+<meta name="theme-color" content="#090d1c"><meta name="description" content="2048 — تحدّي الأرقام. ادمج البلاطات واصنع رقمك القياسي.">
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
-<title>2048 - رحلة الأرقام</title>
+<title>2048 | تحدّي الأرقام</title>
 </head>
 <body>
+<div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
 <main class="app">
-<header class="top"><div class="brand"><span class="logo">2048</span><div><h1>رحلة الأرقام</h1><p>ادمج الأرقام واصل إلى 2048</p></div></div><button id="newGame" class="new">لعبة جديدة ↻</button></header>
-<section class="scores"><div class="score"><span>النقاط</span><b id="score">٠</b></div><div class="score"><span>أفضل نتيجة</span><b id="best">٠</b></div></section>
-<section class="goal"><div><b>🎯 هدفك: 2048</b><span id="message">حرّك المربعات لدمج الأرقام المتساوية</span></div><div class="goal-chip">2048</div></section>
-<div class="board-frame"><div id="board" class="board" role="grid" aria-label="لوحة لعبة 2048"></div><div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="overlayTitle"><h2 id="overlayTitle">انتهت اللعبة</h2><p id="overlayText"></p><button id="continueGame" class="new hidden">متابعة اللعب</button><button id="overlayRestart" class="new">العب مرة أخرى</button></div></div>
-<div class="controls"><button id="undo" class="control" disabled>↶ تراجع</button><button id="hint" class="control">💡 طريقة اللعب</button></div>
-<p class="instructions"><b>طريقة اللعب</b><br>اسحب اللوحة في الاتجاه الذي تريده، أو استخدم الأسهم على لوحة المفاتيح. عندما يلتقي رقمان متساويان يندمجان في رقم مضاعف. حاول الوصول إلى <strong>2048</strong>!</p>
-<footer>✨ كل حركة تقرّبك من الهدف</footer>
+<header class="top">
+  <a class="brand" href="./" aria-label="2048 الرئيسية"><span class="logo"><span>20</span><span>48</span></span><span class="brand-copy"><strong>NUMBER<span> LAB</span></strong><small>تحدّي الأرقام</small></span></a>
+  <button id="themeToggle" class="icon-button" type="button" aria-label="تغيير المظهر" title="تغيير المظهر">☼</button>
+</header>
+<section class="intro"><div><span class="eyebrow"><i></i> EDITION 2027</span><h1>فكّر بذكاء.<br><em>ادمج بلا حدود.</em></h1><p>كل حركة تصنع فرصة جديدة.</p></div><div class="hero-mark" aria-hidden="true"><span>2</span><span>0</span><span>4</span><span>8</span></div></section>
+<section class="stats" aria-label="الإحصائيات">
+  <div class="stat"><span>النقاط الحالية</span><strong id="score">٠</strong><small>YOUR SCORE</small></div>
+  <div class="stat stat-best"><span>أفضل نتيجة</span><strong id="best">٠</strong><small>PERSONAL BEST</small></div>
+  <div class="stat stat-moves"><span>الحركات</span><strong id="moves">٠</strong><small>MOVES</small></div>
+</section>
+<section class="mission"><div class="mission-head"><div><span class="eyebrow">المهمة الحالية</span><strong>الوصول إلى 2048</strong></div><span class="target-pill">2048 <b>✦</b></span></div><div class="progress-track"><div id="progressBar" class="progress-fill"></div></div><div class="progress-meta"><span id="progressLabel">ابدأ رحلتك الآن</span><span id="progressPercent">0%</span></div></section>
+<section class="game-section">
+  <div class="game-heading"><div><span class="eyebrow">PUZZLE ARENA</span><h2>ساحة اللعب</h2></div><span class="live-indicator"><i></i> LIVE</span></div>
+  <div class="board-frame"><div id="board" class="board" role="grid" aria-label="لوحة لعبة 2048"></div>
+    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="overlayTitle"><div class="overlay-icon">✦</div><h2 id="overlayTitle">انتهت اللعبة</h2><p id="overlayText"></p><button id="continueGame" class="primary-button hidden">متابعة اللعب <span>←</span></button><button id="overlayRestart" class="primary-button">ابدأ من جديد <span>↻</span></button></div>
+  </div>
+  <div class="controls"><button id="undo" class="secondary-button" disabled><span>↶</span> تراجع</button><button id="newGame" class="primary-button">لعبة جديدة <span>＋</span></button><button id="hint" class="secondary-button"><span>✧</span> مساعدة</button></div>
+</section>
+<section class="how-to"><div class="how-icon">⌁</div><div><strong>كيف تلعب؟</strong><p>اسحب في أي اتجاه لدمج الأرقام المتطابقة. كل دمج يضاعف الرقم — هل تستطيع الوصول إلى 2048؟</p></div></section>
+<footer><span>NUMBER LAB</span><span>صُممت للتركيز والمتعة <b>✦</b></span></footer>
 </main>
 <script src="game-engine.js"></script><script src="script.js"></script>
 <script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
