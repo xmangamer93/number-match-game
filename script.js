@@ -45,8 +45,8 @@ function saveProgress() {
 }
 function cfg(n) {
   return {
-    goal:60 + Math.floor((n-1)/5)*20,
-    limit:22 - Math.floor((n-1)/10)*2,
+    goal:70 + Math.floor((n-1)/5)*20,
+    limit:20 - Math.floor((n-1)/10)*2,
     count:36 + Math.floor((n-1)/5)*9
   };
 }
