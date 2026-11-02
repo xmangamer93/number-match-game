@@ -277,6 +277,7 @@ $("hintBtn").addEventListener("click",()=>{
   render();
 });
 $("addBtn").addEventListener("click",addNumbers);
+$("removeBtn").addEventListener("click",removeSelected);
 $("undoBtn").addEventListener("click",()=>{
   const previous = history.pop();
   if (!previous) return;
