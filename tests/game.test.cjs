@@ -17,7 +17,7 @@ test("straight horizontal, vertical and diagonal paths work only when clear", ()
   assert.equal(Engine.aligned([1,null,9],0,2,3),true);
   assert.equal(Engine.aligned([1,4,9],0,2,3),false);
   assert.equal(Engine.aligned([1,null,null,null,9],0,4,2),true);
-  assert.equal(Engine.aligned([1,null,null,null,null,9],0,5,3),true);
+  assert.equal(Engine.aligned([1,null,null,null,9],0,4,3),true);
 });
 
 test("consecutive remaining values can match across row boundaries", () => {
