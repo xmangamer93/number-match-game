@@ -104,7 +104,7 @@ test("touch gesture handlers are connected to board pointer release", () => {
   assert.match(script,/Engine\.createPointerGesture/);
   assert.match(script,/board\.addEventListener\("pointerup",finishPointerSelection\)/);
   assert.match(script,/document\.addEventListener\("pointermove",updatePointerSelection/);
-  assert.match(script,/if \(selected\.length >= 2\) removeSelected\(\)/);
+  assert.match(script,/if\s*\(selected\.length\s*>=\s*2\)\s*removeSelected\(\)/);
   assert.match(script,/board\.addEventListener\("contextmenu",event=>event\.preventDefault\(\)/);
 });
 
