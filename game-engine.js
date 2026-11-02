@@ -32,9 +32,17 @@
     return ia >= 0 && ib >= 0 && Math.abs(ia - ib) === 1;
   }
 
+  function adjacent(a, b, columns) {
+    if (a === b) return false;
+    const r1 = Math.floor(a / columns), c1 = a % columns;
+    const r2 = Math.floor(b / columns), c2 = b % columns;
+    return Math.abs(r1-r2) <= 1 && Math.abs(c1-c2) <= 1;
+  }
+
   function canMatch(cells, a, b, columns) {
     return a !== b && pairValue(cells[a], cells[b]) &&
-      (aligned(cells, a, b, columns) || sequential(cells, a, b));
+      (aligned(cells, a, b, columns) || sequential(cells, a, b) ||
+       (cells[a] === cells[b] && adjacent(a, b, columns)));
   }
 
   function findMove(cells, columns) {
@@ -66,5 +74,5 @@
     return board;
   }
 
-  return { pairValue, aligned, sequential, canMatch, findMove, createBoard };
+  return { pairValue, aligned, sequential, adjacent, canMatch, findMove, createBoard };
 });
