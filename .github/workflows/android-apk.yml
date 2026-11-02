@@ -7,6 +7,8 @@ on:
       - 'index.html'
       - 'style.css'
       - 'script.js'
+      - 'game-engine.js'
+      - 'tests/**'
       - 'package.json'
       - 'capacitor.config.json'
       - 'manifest.webmanifest'
@@ -28,12 +30,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+      - name: Install dependencies
+        run: npm install
+      - name: Run game tests
+        run: npm test
       - name: Prepare Capacitor web assets
         run: |
           mkdir -p www
-          cp index.html style.css script.js manifest.webmanifest icon.svg www/
-      - name: Install dependencies
-        run: npm install
+          cp index.html style.css script.js game-engine.js manifest.webmanifest icon.svg www/
       - name: Add Android platform
         run: npx cap add android
       - name: Sync Android project

@@ -29,16 +29,17 @@
     </section>
 
     <section id="gameScreen" class="screen hidden">
-      <div class="game-top"><button id="backBtn" class="round-btn" aria-label="العودة للمراحل">←</button><div class="level-heading"><span id="worldName">عالم الألوان</span><h2 id="levelTitle">المرحلة ١</h2></div><div class="score-pill">⭐ <b id="score">٠</b></div></div>
+      <div class="game-top"><button type="button" id="backBtn" class="round-btn" aria-label="العودة للمراحل">←</button><div class="level-heading"><span id="worldName">عالم الألوان</span><h2 id="levelTitle">المرحلة ١</h2></div><div class="score-pill">⭐ <b id="score">٠</b></div></div>
       <div class="mission-card"><div><span class="mission-label">🎯 هدف المرحلة</span><strong id="goalText">اجمع ٦٠ نقطة</strong></div><div class="mission-progress"><span id="goalProgress">٠٪</span><div class="progress-track"><i id="goalBar"></i></div></div></div>
       <div class="stats-row"><div class="stat"><span>الحركات</span><b id="moves">٠</b></div><div class="stat"><span>أفضل نتيجة</span><b id="best">٠</b></div><div class="stat"><span>النجوم</span><b id="levelStars">☆☆☆</b></div></div>
       <p id="status" class="status" role="status" aria-live="polite">اختار رقمين متوافقين وابدأ التحدي!</p>
       <div class="board-wrap"><div id="board" class="board" aria-label="لوحة الأرقام"></div></div>
-      <div class="toolbar"><button id="hintBtn" class="tool-btn">💡 تلميح</button><button id="undoBtn" class="tool-btn" disabled>↶ تراجع</button><button id="addBtn" class="tool-btn">➕ أرقام</button><button id="restartBtn" class="tool-btn">⟲ إعادة</button></div>
+      <div class="toolbar"><button type="button" id="hintBtn" class="tool-btn">💡 تلميح</button><button type="button" id="undoBtn" class="tool-btn" disabled>↶ تراجع</button><button type="button" id="addBtn" class="tool-btn">➕ أرقام</button><button type="button" id="restartBtn" class="tool-btn">⟲ إعادة</button></div>
       <p class="rule-note">اسحب عينك على الصفوف والأعمدة والقطريات؛ لازم الطريق بين الرقمين يكون فاضي.</p>
     </section>
   </main>
-  <dialog id="resultDialog"><div class="result-content"><div id="resultEmoji" class="result-emoji">🎉</div><h2 id="resultTitle">أحسنت!</h2><p id="resultText"></p><div id="earnedStars" class="earned-stars">⭐⭐⭐</div><div class="result-actions"><button id="nextBtn" class="primary-btn">المرحلة التالية ⟵</button><button id="mapBtn" class="secondary-btn">خريطة المراحل</button></div></div></dialog>
+  <dialog id="resultDialog"><div class="result-content"><div id="resultEmoji" class="result-emoji">🎉</div><h2 id="resultTitle">أحسنت!</h2><p id="resultText"></p><div id="earnedStars" class="earned-stars">⭐⭐⭐</div><div class="result-actions"><button type="button" id="nextBtn" class="primary-btn">المرحلة التالية ⟵</button><button type="button" id="mapBtn" class="secondary-btn">خريطة المراحل</button></div></div></dialog>
+  <script src="game-engine.js"></script>
   <script src="script.js"></script>
   <script>if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
 </body>
