@@ -38,6 +38,23 @@ test("same tile cannot match itself", () => {
   assert.equal(Engine.canMatch([5],0,0,9),false);
 });
 
+test("equal numbers match only when immediately adjacent, including diagonals", () => {
+  const horizontal=[5,5,null,null,null,null];
+  assert.equal(Engine.canMatch(horizontal,0,1,3),true);
+  const vertical=[5,null,null,5,null,null];
+  assert.equal(Engine.canMatch(vertical,0,3,3),true);
+  const diagonal=[5,null,null,null,5,null];
+  assert.equal(Engine.canMatch(diagonal,0,4,3),true);
+  const separated=[5,null,5,null,null,null];
+  assert.equal(Engine.canMatch(separated,0,2,3),false);
+});
+
+test("adjacency does not wrap across the end of a row", () => {
+  assert.equal(Engine.adjacent(2,3,3),false);
+  assert.equal(Engine.adjacent(0,4,3),false);
+});
+
+
 test("every generated stage has a guaranteed legal move and requested tile count", () => {
   for (let level=1;level<=30;level++) {
     const count=36+Math.floor((level-1)/5)*9;
