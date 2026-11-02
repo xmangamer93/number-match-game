@@ -56,6 +56,43 @@
     return null;
   }
 
+  function createPointerGesture(onSelect, onCommit) {
+    let pointerId = null;
+    let lastIndex = null;
+    return {
+      start(id, index) {
+        if (pointerId !== null || !Number.isInteger(index)) return false;
+        pointerId = id;
+        lastIndex = index;
+        onSelect(index);
+        return true;
+      },
+      move(id, index) {
+        if (pointerId !== id || !Number.isInteger(index) || index === lastIndex) return false;
+        lastIndex = index;
+        onSelect(index);
+        return true;
+      },
+      end(id) {
+        if (pointerId !== id) return false;
+        pointerId = null;
+        lastIndex = null;
+        onCommit();
+        return true;
+      },
+      cancel(id) {
+        if (pointerId !== id) return false;
+        pointerId = null;
+        lastIndex = null;
+        return true;
+      },
+      reset() {
+        pointerId = null;
+        lastIndex = null;
+      }
+    };
+  }
+
   function createBoard(count, level, random) {
     const rng = typeof random === "function" ? random : Math.random;
     const pairs = [];
@@ -74,5 +111,5 @@
     return board;
   }
 
-  return { pairValue, aligned, sequential, adjacent, canMatch, findMove, createBoard };
+  return { pairValue, aligned, sequential, adjacent, canMatch, findMove, createBoard, createPointerGesture };
 });
