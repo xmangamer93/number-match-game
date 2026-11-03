@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'game.html'
       - 'style.css'
       - 'script.js'
       - 'game-engine.js'
@@ -34,10 +35,12 @@ jobs:
         run: npm install
       - name: Run game tests
         run: npm test
+      - name: Check JavaScript syntax
+        run: node --check script.js && node --check game-engine.js
       - name: Prepare Capacitor web assets
         run: |
           mkdir -p www
-          cp index.html style.css script.js game-engine.js manifest.webmanifest icon.svg sw.js www/
+          cp index.html game.html style.css script.js game-engine.js manifest.webmanifest icon.svg sw.js www/
       - name: Add Android platform
         run: npx cap add android
       - name: Sync Android project
