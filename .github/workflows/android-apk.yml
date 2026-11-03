@@ -37,7 +37,7 @@ jobs:
       - name: Prepare Capacitor web assets
         run: |
           mkdir -p www
-          cp index.html style.css script.js game-engine.js manifest.webmanifest icon.svg www/
+          cp index.html style.css script.js game-engine.js manifest.webmanifest icon.svg sw.js www/
       - name: Add Android platform
         run: npx cap add android
       - name: Sync Android project
