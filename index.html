@@ -2,34 +2,19 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#090d1c"><meta name="description" content="2048 — تحدّي الأرقام. ادمج البلاطات واصنع رقمك القياسي.">
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
-<title>2048 | تحدّي الأرقام</title>
-</head>
-<body>
-<div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
-<main class="app">
-<header class="top">
-  <a class="brand" href="./" aria-label="2048 الرئيسية"><span class="logo"><span>20</span><span>48</span></span><span class="brand-copy"><strong>NUMBER<span> LAB</span></strong><small>تحدّي الأرقام</small></span></a>
-  <button id="themeToggle" class="icon-button" type="button" aria-label="تغيير المظهر" title="تغيير المظهر">☼</button>
-</header>
-<section class="intro"><div><span class="eyebrow"><i></i> EDITION 2027</span><h1>فكّر بذكاء.<br><em>ادمج بلا حدود.</em></h1><p>كل حركة تصنع فرصة جديدة.</p></div><div class="hero-mark" aria-hidden="true"><span>2</span><span>0</span><span>4</span><span>8</span></div></section>
-<section class="stats" aria-label="الإحصائيات">
-  <div class="stat"><span>النقاط الحالية</span><strong id="score">٠</strong><small>YOUR SCORE</small></div>
-  <div class="stat stat-best"><span>أفضل نتيجة</span><strong id="best">٠</strong><small>PERSONAL BEST</small></div>
-  <div class="stat stat-moves"><span>الحركات</span><strong id="moves">٠</strong><small>MOVES</small></div>
-</section>
-<section class="mission"><div class="mission-head"><div><span class="eyebrow">المهمة الحالية</span><strong>الوصول إلى 2048</strong></div><span class="target-pill">2048 <b>✦</b></span></div><div class="progress-track"><div id="progressBar" class="progress-fill"></div></div><div class="progress-meta"><span id="progressLabel">ابدأ رحلتك الآن</span><span id="progressPercent">0%</span></div></section>
-<section class="game-section">
-  <div class="game-heading"><div><span class="eyebrow">PUZZLE ARENA</span><h2>ساحة اللعب</h2></div><span class="live-indicator"><i></i> LIVE</span></div>
-  <div class="board-frame"><div id="board" class="board" role="grid" aria-label="لوحة لعبة 2048"></div>
-    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="overlayTitle"><div class="overlay-icon">✦</div><h2 id="overlayTitle">انتهت اللعبة</h2><p id="overlayText"></p><button id="continueGame" class="primary-button hidden">متابعة اللعب <span>←</span></button><button id="overlayRestart" class="primary-button">ابدأ من جديد <span>↻</span></button></div>
-  </div>
-  <div class="controls"><button id="undo" class="secondary-button" disabled><span>↶</span> تراجع</button><button id="newGame" class="primary-button">لعبة جديدة <span>＋</span></button><button id="hint" class="secondary-button"><span>✧</span> مساعدة</button></div>
-</section>
-<section class="how-to"><div class="how-icon">⌁</div><div><strong>كيف تلعب؟</strong><p>اسحب في أي اتجاه لدمج الأرقام المتطابقة. كل دمج يضاعف الرقم — هل تستطيع الوصول إلى 2048؟</p></div></section>
-<footer><span>NUMBER LAB</span><span>صُممت للتركيز والمتعة <b>✦</b></span></footer>
-</main>
-<script src="game-engine.js"></script><script src="script.js"></script>
-<script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
-</body></html>
+<meta name="theme-color" content="#090d1c"><meta name="description" content="NUMBER LAB — لعبة 2048. ابدأ التحدي وادمج الأرقام.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>NUMBER LAB | ابدأ التحدي</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 50% 0,#203452 0,transparent 48%),#090d1c;color:#f4f7ff;font-family:Alexandria,Tahoma,sans-serif}.home{width:min(480px,100%);text-align:center}.brand{display:inline-flex;align-items:center;gap:12px;margin-bottom:54px;text-align:right}.logo{width:54px;height:54px;display:grid;grid-template-columns:1fr 1fr;place-items:center;border-radius:16px;background:linear-gradient(145deg,#d6ff81,#8ebd40);color:#17230d;font-weight:800;font-size:14px;transform:rotate(-5deg)}.brand strong{display:block;letter-spacing:2px;font-size:16px}.brand strong span{color:#c7f36b}.brand small{display:block;color:#91a0ba;font-size:11px;margin-top:4px}.eyebrow{color:#c7f36b;font-size:10px;letter-spacing:2px;font-weight:700}.tiles{width:178px;height:178px;margin:0 auto 32px;display:grid;grid-template-columns:1fr 1fr;gap:9px;transform:rotate(-7deg)}.tiles span{display:grid;place-items:center;border-radius:20px;background:#d9f28a;color:#283616;font-size:35px;font-weight:800;box-shadow:0 12px 28px #0003}.tiles span:nth-child(2){background:#283a51;color:#9cb5d6}.tiles span:nth-child(3){background:#6de4d2;color:#102c2b}.tiles span:nth-child(4){background:#e5a65e;color:#38200a}h1{font-size:clamp(32px,9vw,46px);line-height:1.35;margin:0 0 12px;font-weight:800}h1 em{font-style:normal;color:#c7f36b}.desc{color:#a1afc7;font-size:13px;line-height:2;margin:0 auto 30px;max-width:340px}.start{display:inline-flex;align-items:center;justify-content:center;gap:12px;width:min(300px,100%);min-height:58px;border:0;border-radius:17px;background:#c7f36b;color:#1b2a0e;font:800 15px Alexandria,Tahoma,sans-serif;text-decoration:none;box-shadow:0 10px 28px #c7f36b25;transition:transform .15s}.start:active{transform:scale(.97)}.start span{font-size:22px}.note{margin-top:28px;color:#71809a;font-size:10px;line-height:1.8}
+</style></head>
+<body><main class="home">
+<div class="brand"><span class="logo"><span>20</span><span>48</span></span><span><strong>NUMBER<span> LAB</span></strong><small>تحدّي الأرقام</small></span></div>
+<div class="tiles" aria-hidden="true"><span>2</span><span>0</span><span>4</span><span>8</span></div>
+<div class="eyebrow">EDITION 2027 · NUMBER PUZZLE</div>
+<h1>فكّر بذكاء.<br><em>ادمج بلا حدود.</em></h1>
+<p class="desc">اختبر تركيزك وخطّط لكل حركة. ادمج الأرقام المتطابقة وحاول الوصول إلى 2048.</p>
+<a class="start" href="./game.html">ابدأ اللعب <span>←</span></a>
+<div class="note">اسحب الأرقام لأعلى أو لأسفل أو يمينًا أو يسارًا<br>كل حركة تقرّبك من الرقم الأكبر</div>
+</main></body></html>
