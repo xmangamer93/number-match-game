@@ -1,110 +1,37 @@
 (()=>{
 "use strict";
-const $=id=>document.getElementById(id);
-const G=window.Number2048;
-if(!G) throw new Error("تعذر تحميل محرك اللعبة");
-const ar=n=>new Intl.NumberFormat("ar-EG").format(n);
-const safeGet=()=>{try{return Math.max(0,Number(localStorage.getItem("journey2048Best"))||0)}catch(_){return 0}};
-const safeSet=n=>{try{localStorage.setItem("journey2048Best",String(n))}catch(_){}};
-let board=G.initial(),score=0,best=safeGet(),moves=0,undoState=null,wonShown=false,over=false,touchStart=null,cells=[],animating=false;
-const required=["board","score","best","moves","undo","progressBar","progressPercent","progressLabel","overlay","continueGame","overlayTitle","overlayText","overlayRestart","newGame","hint","themeToggle"];
-if(required.some(id=>!$(id))) throw new Error("عناصر واجهة اللعبة غير مكتملة");
-function ensureCells(){
- const host=$("board");
- if(cells.length===16&&cells.every(c=>c.parentNode===host))return;
- host.replaceChildren();
- cells=Array.from({length:16},(_,i)=>{
-  const cell=document.createElement("div");cell.className="cell";cell.dataset.v="";cell.dataset.index=i;cell.setAttribute("role","gridcell");host.append(cell);return cell;
- });
-}
-function updateCell(cell,value){cell.dataset.v=value||"";cell.setAttribute("aria-label",value?String(value):"فارغ");cell.textContent=value?ar(value):"";}
-function animateMove(previous,spawned,merged){
- const rects=cells.map(c=>c.getBoundingClientRect());
- const used=new Set();
- for(let dest=0;dest<16;dest++){
-  const value=board[dest];if(!value||dest===spawned)continue;
-  let source=-1;
-  if(previous[dest]===value&&!used.has(dest))source=dest;
-  if(source<0){
-   let bestDistance=Infinity;
-   for(let i=0;i<16;i++){
-    if(used.has(i)||!previous[i])continue;
-    if(previous[i]!==value&&previous[i]*2!==value)continue;
-    const distance=Math.abs(rects[i].left-rects[dest].left)+Math.abs(rects[i].top-rects[dest].top);
-    if(distance<bestDistance){bestDistance=distance;source=i;}
-   }
-  }
-  if(source<0||source===dest){if(source===dest)used.add(source);continue;}
-  used.add(source);
-  const dx=rects[source].left-rects[dest].left,dy=rects[source].top-rects[dest].top,cell=cells[dest];
-  cell.classList.add("tile-moving");cell.style.transition="none";cell.style.transform=`translate3d(${dx}px,${dy}px,0)`;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{cell.style.transition="transform 145ms cubic-bezier(.2,.8,.2,1)";cell.style.transform="translate3d(0,0,0)";}));
-  cell.addEventListener("transitionend",()=>{cell.style.removeProperty("transition");cell.style.removeProperty("transform");cell.classList.remove("tile-moving");},{once:true});
- }
- if(spawned>=0){const cell=cells[spawned];requestAnimationFrame(()=>cell.classList.add("pop"));cell.addEventListener("animationend",()=>cell.classList.remove("pop"),{once:true});}
- if(merged.length)setTimeout(()=>merged.forEach(i=>{const cell=cells[i];if(!cell)return;cell.classList.remove("pop");void cell.offsetWidth;cell.classList.add("pop");cell.addEventListener("animationend",()=>cell.classList.remove("pop"),{once:true});}),150);
-}
-function render(merged=[],previous=null,spawned=-1){
- ensureCells();
- cells.forEach((cell,i)=>{cell.classList.remove("pop","tile-moving");cell.style.removeProperty("transform");cell.style.removeProperty("transition");updateCell(cell,board[i]);});
- $("score").textContent=ar(score);$("best").textContent=ar(best);$("moves").textContent=ar(moves);$("undo").disabled=!undoState;
- const max=Math.max(0,...board),pct=Math.min(100,max/2048*100);
- $("progressBar").style.width=pct+"%";$("progressPercent").textContent=Math.floor(pct)+"%";$("progressLabel").textContent=max?"أعلى بلاطة: "+ar(max):"ابدأ رحلتك الآن";
- if(previous)animateMove(previous,spawned,merged);
-}
-function showOverlay(title,message,canContinue){
- $("continueGame").textContent="متابعة اللعب ←";$("overlayTitle").textContent=title;$("overlayText").textContent=message;
- $("continueGame").classList.toggle("hidden",!canContinue);$("overlayRestart").classList.remove("hidden");$("overlay").classList.remove("hidden");
-}
-function endGame(){over=true;showOverlay("انتهت الحركات","نتيجتك "+ar(score)+" نقطة. جرب مرة أخرى وحاول تحطيم رقمك القياسي.",false);}
-function move(direction){
- if(over||animating)return;
- const result=G.move(board,direction);if(!result.changed)return;
- const previous=board.slice();
- undoState={board:previous.slice(),score,moves,wonShown};
- board=G.spawn(result.board);
- const spawned=board.findIndex((v,i)=>result.board[i]===0&&v!==0);
- score+=result.score;moves++;
- if(score>best){best=score;safeSet(best);}
- animating=true;render(result.merged,previous,spawned);
- window.setTimeout(()=>{animating=false;},170);
- if(G.won(board)&&!wonShown){wonShown=true;over=true;showOverlay("وصلت إلى 2048!","إنجاز رائع! يمكنك متابعة اللعب وتحطيم رقمك القياسي.",true);}
- else if(!G.canMove(board))window.setTimeout(endGame,175);
-}
-function reset(){
- board=G.initial();score=0;moves=0;undoState=null;wonShown=false;over=false;touchStart=null;animating=false;
- $("overlay").classList.add("hidden");render();
-}
-function direction(dx,dy){if(Math.abs(dx)>Math.abs(dy))move(dx>0?"right":"left");else if(Math.abs(dy)>0)move(dy>0?"down":"up");}
-document.addEventListener("keydown",e=>{
- const map={ArrowLeft:"left",ArrowRight:"right",ArrowUp:"up",ArrowDown:"down"};
- if(map[e.key]&&!e.target.closest("button,input,textarea,select")){e.preventDefault();move(map[e.key]);}
-});
-const surface=$("board");
-surface.addEventListener("pointerdown",e=>{
- if(e.pointerType==="mouse"&&e.button!==0)return;
- touchStart={x:e.clientX,y:e.clientY,id:e.pointerId};
- if(surface.setPointerCapture)surface.setPointerCapture(e.pointerId);
-});
-surface.addEventListener("pointerup",e=>{
- if(!touchStart||touchStart.id!==e.pointerId)return;
- const dx=e.clientX-touchStart.x,dy=e.clientY-touchStart.y;touchStart=null;
- if(Math.max(Math.abs(dx),Math.abs(dy))>=24)direction(dx,dy);
-});
-surface.addEventListener("pointercancel",()=>{touchStart=null;});
-$("newGame").addEventListener("click",reset);$("overlayRestart").addEventListener("click",reset);
-$("continueGame").addEventListener("click",()=>{$("overlay").classList.add("hidden");over=false;});
-$("undo").addEventListener("click",()=>{
- if(!undoState||animating)return;
- board=undoState.board;score=undoState.score;moves=undoState.moves;wonShown=undoState.wonShown;undoState=null;over=false;
- $("overlay").classList.add("hidden");render();
-});
-$("hint").addEventListener("click",()=>showOverlay("نصيحة سريعة","حافظ على أكبر رقم في أحد أركان اللوحة، وحاول ترتيب الأرقام حوله. لا تملأ المساحات الفارغة بسرعة!",true));
-$("themeToggle").addEventListener("click",()=>{
- document.body.classList.toggle("light");const light=document.body.classList.contains("light");
- try{localStorage.setItem("numberLabTheme",light?"light":"dark")}catch(_){}
- $("themeToggle").textContent=light?"☾":"☼";
-});
-try{if(localStorage.getItem("numberLabTheme")==="light"){document.body.classList.add("light");$("themeToggle").textContent="☾";}}catch(_){}
+const $=id=>document.getElementById(id),G=window.Number2048;if(!G)throw new Error("تعذر تحميل محرك اللعبة");
+const ar=n=>new Intl.NumberFormat("ar-EG").format(n),KEY="numberLabSaveV2",THEME="numberLabTheme";
+const stages=[{id:1,target:64,name:"بوابة البداية",boss:"حارس الصفر"},{id:2,target:128,name:"وادي النبض",boss:"ملك الأربعات"},{id:3,target:256,name:"مدينة النبض",boss:"قائد 128"},{id:4,target:512,name:"المتاهة البنفسجية",boss:"ظل 256"},{id:5,target:1024,name:"قلعة الذهب",boss:"حارس 512"},{id:6,target:2048,name:"قمة المختبر",boss:"ملك 1024"},{id:7,target:4096,name:"البعد الأسطوري",boss:"العملاق 2048"}];
+const powers=[{id:"lightning",icon:"⚡",name:"صاعقة",desc:"تحذف أكبر رقم مجاور لثلاث خانات.",cost:40},{id:"bomb",icon:"💥",name:"قنبلة",desc:"تفرغ الخانة المختارة وجيرانها.",cost:60},{id:"ice",icon:"❄",name:"تجميد",desc:"يمنع ظهور 4 في الحركة التالية.",cost:35},{id:"wild",icon:"✦",name:"جوكر",desc:"يضاعف رقمًا واحدًا تختاره.",cost:80}];
+let save=load(),board=save.board||G.initial(),score=save.score||0,best=save.best||0,moves=save.moves||0,stage=save.stage||1,coins=save.coins||0,combo=save.combo||0,maxCombo=save.maxCombo||0,wonShown=save.wonShown||false,over=false,animating=false,touchStart=null,cells=[],powerMap=save.powerMap||{},selectedPower=null,freezeNext=save.freezeNext||false,achievements=save.achievements||{};
+const required=["board","score","best","moves","undo","progressBar","progressPercent","progressLabel","overlay","continueGame","overlayTitle","overlayText","overlayRestart","newGame","hint","themeToggle","stageNumber","stageName","coins","combo","powerList","missionList","achievementList","worldName","bossName","stageMap","powerStatus"];
+if(required.some(id=>!$(id)))throw new Error("عناصر واجهة اللعبة غير مكتملة");
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(_){return{}}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({board,score,best,moves,stage,coins,combo,maxCombo,wonShown,powerMap,freezeNext,achievements}))}catch(_){} }
+function stageInfo(){return stages[Math.min(stage,stages.length)-1]}
+function ensureCells(){const host=$("board");if(cells.length===16&&cells.every(c=>c.parentNode===host))return;host.replaceChildren();cells=Array.from({length:16},(_,i)=>{const c=document.createElement("div");c.className="cell";c.dataset.index=i;c.setAttribute("role","gridcell");host.append(c);return c})}
+function updateCell(c,v,i){const power=powerMap[i];c.dataset.v=v||"";c.textContent=v?ar(v):"";c.setAttribute("aria-label",v?`${v}${power?" "+power.name:""}`:"فارغ");c.classList.toggle("power-tile",!!power);c.dataset.power=power?.id||"";c.querySelector(".power-badge")?.remove();if(power){const b=document.createElement("span");b.className="power-badge";b.textContent=power.icon;c.append(b)}}
+function nearestSource(previous,dest,value,used){let source=-1,dist=Infinity;const r=cells.map(c=>c.getBoundingClientRect());for(let i=0;i<16;i++){if(used.has(i)||!previous[i])continue;if(previous[i]!==value&&previous[i]*2!==value)continue;const d=Math.abs(r[i].left-r[dest].left)+Math.abs(r[i].top-r[dest].top);if(d<dist){dist=d;source=i}}return source}
+function animate(previous,spawned,merged){const rects=cells.map(c=>c.getBoundingClientRect()),used=new Set();for(let dest=0;dest<16;dest++){const value=board[dest];if(!value||dest===spawned)continue;let source=previous[dest]===value&&!used.has(dest)?dest:nearestSource(previous,dest,value,used);if(source<0||source===dest){if(source===dest)used.add(source);continue}used.add(source);const c=cells[dest],dx=rects[source].left-rects[dest].left,dy=rects[source].top-rects[dest].top;c.classList.add("tile-moving");c.style.transition="none";c.style.transform=`translate3d(${dx}px,${dy}px,0)`;requestAnimationFrame(()=>requestAnimationFrame(()=>{c.style.transition="transform 145ms cubic-bezier(.2,.8,.2,1)";c.style.transform="translate3d(0,0,0)"})) ;c.addEventListener("transitionend",()=>{c.style.removeProperty("transition");c.style.removeProperty("transform");c.classList.remove("tile-moving")},{once:true})}if(spawned>=0){const c=cells[spawned];requestAnimationFrame(()=>c.classList.add("pop"));c.addEventListener("animationend",()=>c.classList.remove("pop"),{once:true})}if(merged.length)setTimeout(()=>merged.forEach(i=>{const c=cells[i];if(!c)return;c.classList.remove("pop");void c.offsetWidth;c.classList.add("pop");c.addEventListener("animationend",()=>c.classList.remove("pop"),{once:true})}),150)}
+function render(merged=[],previous=null,spawned=-1){ensureCells();cells.forEach((c,i)=>{c.classList.remove("pop","tile-moving");c.style.removeProperty("transform");c.style.removeProperty("transition");updateCell(c,board[i])});$("score").textContent=ar(score);$("best").textContent=ar(best);$("moves").textContent=ar(moves);$("coins").textContent=ar(coins);$("combo").textContent=ar(combo);$("undo").disabled=!save.undo;const info=stageInfo(),max=Math.max(0,...board),pct=Math.min(100,max/info.target*100);$("progressBar").style.width=pct+"%";$("progressPercent").textContent=Math.floor(pct)+"%";$("progressLabel").textContent=`هدف المرحلة: ${ar(info.target)} • أعلى بلاطة: ${ar(max)}`;$("stageNumber").textContent=ar(stage);$("stageName").textContent=info.name;$("worldName").textContent=stage>=7?"LEGENDARY DIMENSION":"WORLD "+stage;$("bossName").textContent=info.boss;renderMap();renderPowers();renderMissions();renderAchievements();$("powerStatus").textContent=selectedPower?`اختر خانة لاستخدام ${selectedPower.name}`:"اختر قوة ثم اضغط على بلاطة";if(previous)animate(previous,spawned,merged)}
+function renderMap(){const host=$("stageMap");host.innerHTML="";stages.forEach(s=>{const b=document.createElement("button");b.className=`stage-node ${s.id===stage?"active":""} ${s.id<stage?"done":""} ${s.id>stage?"locked":""}`;b.disabled=s.id>stage;b.innerHTML=`<b>${s.id}</b><span>${s.target}</span>`;b.title=s.name;b.onclick=()=>{if(s.id<=stage){stage=s.id;reset(true)}};host.append(b)})}
+function renderPowers(){const host=$("powerList");host.innerHTML="";powers.forEach(p=>{const b=document.createElement("button");b.className=`power-card ${selectedPower?.id===p.id?"selected":""}`;b.innerHTML=`<span>${p.icon}</span><b>${p.name}</b><small>${p.desc}</small><em>✦ ${p.cost}</em>`;b.disabled=coins<p.cost;b.onclick=()=>{selectedPower=p;renderPowers();$("powerStatus").textContent=`اختر خانة لاستخدام ${p.name}`};host.append(b)})}
+function renderMissions(){const info=stageInfo(),items=[[`الوصول إلى ${info.target}`,Math.max(...board)>=info.target], ["صنع كومبو ×5",maxCombo>=5],["تنفيذ 10 حركات",moves>=10],["جمع 500 عملة",coins>=500]];$("missionList").innerHTML=items.map(x=>`<div class="mission-row ${x[1]?"done":""}"><span>${x[1]?"✓":"○"}</span>${x[0]}</div>`).join("")}
+function renderAchievements(){const items=[['first','أول دمج','ادمج بلاطتين'],['combo','سلسلة نار','وصل كومبو ×5'],['stage','مستكشف','افتح 3 مراحل'],['legend','أسطوري','بلغ 4096']];$("achievementList").innerHTML=items.map(([id,n,d])=>`<div class="achievement ${achievements[id]?"unlocked":""}"><span>${achievements[id]?"🏆":"◇"}</span><div><b>${n}</b><small>${d}</small></div></div>`).join("")}
+function unlock(id){if(!achievements[id]){achievements[id]=true;coins+=25;toast("إنجاز جديد +25 ✦")}}
+function toast(text){const t=document.createElement("div");t.className="toast";t.textContent=text;document.body.append(t);setTimeout(()=>t.remove(),1800)}
+function showOverlay(title,message,canContinue){$("continueGame").textContent="متابعة اللعب ←";$("overlayTitle").textContent=title;$("overlayText").textContent=message;$("continueGame").classList.toggle("hidden",!canContinue);$("overlayRestart").classList.remove("hidden");$("overlay").classList.remove("hidden")}
+function endGame(){over=true;showOverlay("انتهت الحركات",`نتيجتك ${ar(score)} نقطة • أفضل كومبو ×${ar(maxCombo)}`,false)}
+function addPower(){if(Math.random()>.72)return;const free=board.map((v,i)=>v&&!powerMap[i]?i:-1).filter(i=>i>=0);if(!free.length)return;const p=powers[Math.floor(Math.random()*powers.length)];powerMap[free[Math.floor(Math.random()*free.length)]]=p}
+function remapPowers(previous,resultBoard){const old={...powerMap},next={};for(let i=0;i<16;i++){if(!old[i]||!previous[i])continue;let candidates=[];for(let d=0;d<16;d++)if(resultBoard[d]===previous[i]&&!candidates.includes(d))candidates.push(d);if(candidates.length)next[candidates[0]]=old[i]}for(const m of resultBoard.entries()){const i=m[0];if(resultBoard[i]&&G.won([resultBoard[i],...Array(15).fill(0)])){} }powerMap=next}
+function usePower(index){if(!selectedPower||!board[index])return;const p=selectedPower;if(coins<p.cost)return;coins-=p.cost;selectedPower=null;if(p.id==="bomb"){for(let r=Math.floor(index/4)-1;r<=Math.floor(index/4)+1;r++)for(let c=Math.floor(index%4)-1;c<=Math.floor(index%4)+1;c++){if(r>=0&&r<4&&c>=0&&c<4){const i=r*4+c;board[i]=0;delete powerMap[i]}}}else if(p.id==="lightning"){const row=Math.floor(index/4),col=index%4,targets=[index,row*4+(col+1)%4,row*4+(col+3)%4,(row+1)%4*4+col,(row+3)%4*4+col].filter(i=>board[i]);targets.sort((a,b)=>board[b]-board[a]);if(targets[0]!==undefined){board[targets[0]]=0;delete powerMap[targets[0]]}}else if(p.id==="ice"){freezeNext=true}else if(p.id==="wild"){board[index]*=2;score+=board[index];unlock("first")}moves++;render();persist();if(!G.canMove(board))endGame()}
+function move(direction){if(over||animating)return;const result=G.move(board,direction);if(!result.changed){combo=0;render();return}const previous=board.slice();save.undo={board:previous.slice(),score,moves,stage,coins,combo,maxCombo,powerMap:{...powerMap},freezeNext};remapPowers(previous,result.board);board=freezeNext?result.board.slice():G.spawn(result.board);freezeNext=false;const spawned=board.findIndex((v,i)=>result.board[i]===0&&v!==0);addPower();score+=result.score;combo++;maxCombo=Math.max(maxCombo,combo);coins+=Math.max(1,result.score?Math.floor(result.score/8):1)+(combo>=3?combo:0);moves++;unlock("first");if(maxCombo>=5)unlock("combo");if(stage>=3)unlock("stage");if(score>best){best=score;try{localStorage.setItem("journey2048Best",String(best))}catch(_){}}if(Math.max(...board)>=4096)unlock("legend");const info=stageInfo();if(Math.max(...board)>=info.target&&stage<stages.length){stage++;coins+=100;showOverlay(`مرحلة ${ar(stage)} 解锁!`,`وصلت إلى ${stageInfo().name} • Boss: ${stageInfo().boss} • +100 ✦`,true)}animating=true;render(result.merged,previous,spawned);persist();setTimeout(()=>{animating=false},170);if(G.won(board,2048)&&!wonShown){wonShown=true;showOverlay("2048 — بداية الأسطورة","فتحت العالم الأسطوري. استمر حتى 4096 وما بعده!",true)}else if(!G.canMove(board))setTimeout(endGame,175)}
+function reset(keepStage=false){if(!keepStage)stage=1;board=G.initial();score=0;moves=0;combo=0;wonShown=false;over=false;animating=false;powerMap={};selectedPower=null;save.undo=null;$("overlay").classList.add("hidden");render();persist()}
+function undo(){const u=save.undo;if(!u||animating)return;board=u.board;score=u.score;moves=u.moves;stage=u.stage;coins=u.coins;combo=u.combo;maxCombo=u.maxCombo;powerMap=u.powerMap||{};freezeNext=u.freezeNext;save.undo=null;over=false;$("overlay").classList.add("hidden");render();persist()}
+function hint(){const options=["حافظ على أكبر بلاطة في زاوية ثابتة.","لا تستهلك المساحات الفارغة بسرعة؛ خطط للحركة التالية.","الكومبو يضاعف مكافآت العملات.","استخدم القنبلة عند امتلاء منطقة 3×3.","الصاعقة أفضل عندما تحاصرها أرقام كبيرة."];showOverlay("ذكاء المختبر",options[moves%options.length],true)}
+const surface=$("board");surface.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;touchStart={x:e.clientX,y:e.clientY,id:e.pointerId};if(surface.setPointerCapture)surface.setPointerCapture(e.pointerId)});surface.addEventListener("pointerup",e=>{if(!touchStart||touchStart.id!==e.pointerId)return;const dx=e.clientX-touchStart.x,dy=e.clientY-touchStart.y;touchStart=null;if(Math.max(Math.abs(dx),Math.abs(dy))>=24)move(Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"));else{const r=surface.getBoundingClientRect(),col=Math.min(3,Math.max(0,Math.floor((e.clientX-r.left)/(r.width/4)))),row=Math.min(3,Math.max(0,Math.floor((e.clientY-r.top)/(r.height/4)))),index=row*4+col;usePower(index)}});surface.addEventListener("pointercancel",()=>touchStart=null);document.addEventListener("keydown",e=>{const m={ArrowLeft:"left",ArrowRight:"right",ArrowUp:"up",ArrowDown:"down"};if(m[e.key]&&!e.target.closest("button,input,textarea,select")){e.preventDefault();move(m[e.key])}});
+$("newGame").onclick=()=>reset(false);$("overlayRestart").onclick=()=>reset(false);$("continueGame").onclick=()=>{$("overlay").classList.add("hidden");over=false};$("undo").onclick=undo;$("hint").onclick=hint;$("themeToggle").onclick=()=>{document.body.classList.toggle("light");try{localStorage.setItem(THEME,document.body.classList.contains("light")?"light":"dark")}catch(_){}$("themeToggle").textContent=document.body.classList.contains("light")?"☾":"☼"};
+try{if(localStorage.getItem(THEME)==="light"){$("body")?.classList.add("light");document.body.classList.add("light");$("themeToggle").textContent="☾"}}catch(_){}
 render();
 })();
