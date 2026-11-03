@@ -8,6 +8,7 @@ on:
       - 'game.html'
       - 'style.css'
       - 'script.js'
+      - 'legendary.js'
       - 'game-engine.js'
       - 'tests/**'
       - 'package.json'
@@ -15,7 +16,6 @@ on:
       - 'manifest.webmanifest'
       - 'icon.svg'
       - 'sw.js'
-      - '.github/workflows/android-apk.yml'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,11 +36,11 @@ jobs:
       - name: Run game tests
         run: npm test
       - name: Check JavaScript syntax
-        run: node --check script.js && node --check game-engine.js
+        run: node --check script.js && node --check game-engine.js && node --check legendary.js
       - name: Prepare Capacitor web assets
         run: |
           mkdir -p www
-          cp index.html game.html style.css script.js game-engine.js manifest.webmanifest icon.svg sw.js www/
+          cp index.html game.html style.css script.js legendary.js game-engine.js manifest.webmanifest icon.svg sw.js www/
       - name: Add Android platform
         run: npx cap add android
       - name: Sync Android project
