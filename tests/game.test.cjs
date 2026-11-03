@@ -14,4 +14,4 @@ test("spawn can generate a 4 when value roll is high",()=>{const b=Array(16).fil
 test("spawn returns a copy when board is full",()=>{const b=Array(16).fill(2),out=G.spawn(b);assert.notEqual(out,b);assert.deepEqual(out,b);});
 test("win and no-move detection work",()=>{assert.equal(G.won([2048,...Array(15).fill(0)]),true);assert.equal(G.canMove(Array(16).fill(0)),true);assert.equal(G.canMove(Array.from({length:16},(_,i)=>(Math.floor(i/4)+i%4)%2?4:2)),false);});
 test("invalid direction and malformed boards are rejected",()=>{assert.throws(()=>G.move(Array(16).fill(0),"diagonal"),/Direction/);assert.throws(()=>G.move([2,2],"left"),/Board/);});
-test("random generator values are safely clamped",()=>{const b=Array(16).fill(0);assert.equal(G.spawn(b,()=>-10)[0],2);const c=Array(16).fill(0);assert.equal(G.spawn(c,()=>10)[15],2);});
+test("random generator values are safely clamped",()=>{const b=Array(16).fill(0);assert.equal(G.spawn(b,()=>-10)[0],2);const c=Array(16).fill(0);assert.equal(G.spawn(c,()=>10)[15],4);});
