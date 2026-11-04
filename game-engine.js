@@ -21,8 +21,9 @@
   }
   return{board:out,score:gained,changed:out.some((v,i)=>v!==board[i]),merged,merges,tileMoves};
  }
+ function neighbors(index,diagonal=false){if(!Number.isInteger(index)||index<0||index>=16)throw new RangeError("Cell index must be between 0 and 15");const row=Math.floor(index/4),col=index%4,dirs=diagonal?[[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]]:[[0,1],[0,-1],[1,0],[-1,0]];return dirs.map(([dr,dc])=>[row+dr,col+dc]).filter(([r,c])=>r>=0&&r<4&&c>=0&&c<4).map(([r,c])=>r*4+c);}
  function mapTileEffects(effects,tileMoves){const next={};for(const move of tileMoves||[]){const source=(move.sources||[]).find(index=>Object.prototype.hasOwnProperty.call(effects||{},index));if(source!==undefined&&Number.isInteger(move.destination)&&move.destination>=0&&move.destination<16&&!Object.prototype.hasOwnProperty.call(next,move.destination))next[move.destination]=effects[source]}return next;}
  function canMove(board){validate(board);return board.some(v=>!v)||board.some((v,i)=>i%4<3&&v===board[i+1])||board.some((v,i)=>i<12&&v===board[i+4]);}
  function won(board,target=2048){validate(board);return board.some(v=>v>=target);}
- const api={empty,spawn,initial,move,mapTileEffects,canMove,won};if(typeof module!=="undefined"&&module.exports)module.exports=api;root.Number2048=api;
+ const api={empty,spawn,initial,move,neighbors,mapTileEffects,canMove,won};if(typeof module!=="undefined"&&module.exports)module.exports=api;root.Number2048=api;
 })(typeof window!=="undefined"?window:globalThis);
