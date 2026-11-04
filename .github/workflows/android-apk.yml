@@ -25,6 +25,7 @@ on:
       - 'game-engine.js'
       - 'mode-engine.js'
       - 'mode-manager.js'
+      - 'progression-engine.js'
       - 'tests/**'
       - 'package.json'
       - 'capacitor.config.json'
