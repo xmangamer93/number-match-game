@@ -8,17 +8,18 @@
  function initial(random=Math.random){return spawn(spawn(empty(),random),random);}
  function move(board,direction){
   validate(board);if(!DIRECTIONS.includes(direction))throw new TypeError("Direction must be left, right, up, or down");
-  const out=board.slice();let gained=0,merged=[],merges=[];
+  const out=board.slice();let gained=0,merged=[],merges=[],tileMoves=[];
   for(let line=0;line<4;line++){
    const ids=[];for(let p=0;p<4;p++)ids.push(direction==="left"?line*4+p:direction==="right"?line*4+(3-p):direction==="up"?p*4+line:(3-p)*4+line);
-   const vals=ids.map(i=>board[i]).filter(Boolean),next=[];
-   for(let i=0;i<vals.length;i++){
-    if(vals[i]===vals[i+1]){const value=vals[i]*2;next.push(value);gained+=value;const dest=ids[next.length-1];merged.push(dest);merges.push({value,sourceValues:[vals[i],vals[i+1]],destination:dest});i++;}
-    else next.push(vals[i]);
+   const tiles=ids.map(id=>({id,value:board[id]})).filter(tile=>tile.value),next=[];
+   for(let i=0;i<tiles.length;i++){
+    const dest=ids[next.length];
+    if(tiles[i].value===tiles[i+1]?.value){const value=tiles[i].value*2;next.push(value);gained+=value;merged.push(dest);merges.push({value,sourceValues:[tiles[i].value,tiles[i+1].value],destination:dest});tileMoves.push({sources:[tiles[i].id,tiles[i+1].id],destination:dest,merged:true,value});i++;}
+    else{next.push(tiles[i].value);tileMoves.push({sources:[tiles[i].id],destination:dest,merged:false,value:tiles[i].value});}
    }
    ids.forEach((id,j)=>out[id]=next[j]||0);
   }
-  return{board:out,score:gained,changed:out.some((v,i)=>v!==board[i]),merged,merges};
+  return{board:out,score:gained,changed:out.some((v,i)=>v!==board[i]),merged,merges,tileMoves};
  }
  function canMove(board){validate(board);return board.some(v=>!v)||board.some((v,i)=>i%4<3&&v===board[i+1])||board.some((v,i)=>i<12&&v===board[i+4]);}
  function won(board,target=2048){validate(board);return board.some(v=>v>=target);}
