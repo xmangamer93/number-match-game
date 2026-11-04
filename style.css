@@ -49,3 +49,32 @@ body.light .utility-drawer{background:rgba(255,255,255,.82);border-color:#d5deea
 body.light .utility-drawer>.map-panel,body.light .utility-drawer>.powers-panel,body.light .utility-drawer>.missions-panel,body.light .utility-drawer>.achievements-panel{background:transparent}
 @media(max-width:390px){.utility-drawer>summary{padding:11px 12px}.board-frame{border-radius:21px}.game-heading{margin-top:12px}}
 @media(prefers-reduced-motion:reduce){.fx-particle,.board-frame.screen-shake,.board-frame.combo-flash{animation:none!important}}
+
+/* Journey worlds, upgrade shop, and daily quest progression */
+.journey-map{display:grid;gap:12px}
+.journey-world{padding:10px;border:1px solid var(--glass-line);border-radius:13px;background:rgba(8,15,28,.28)}
+.journey-world h3{margin:0 0 9px;color:var(--lime);font-size:11px}
+.journey-world .stage-map{grid-template-columns:repeat(5,minmax(0,1fr))}
+.stage-node:disabled{position:relative}
+.stage-node.locked::after{content:"🔒";font-size:9px;position:absolute;bottom:4px}
+.upgrade-list{display:grid;gap:8px}
+.upgrade-card{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:9px;padding:10px;border:1px solid var(--glass-line);border-radius:13px;background:#17233a;color:var(--text);text-align:right;cursor:pointer}
+.upgrade-card>span{font-size:25px;text-align:center}
+.upgrade-card>div b,.upgrade-card>div small,.upgrade-card>div em{display:block}
+.upgrade-card>div b{font-size:10px}
+.upgrade-card>div small{margin:3px 0;color:var(--muted);font-size:8px}
+.upgrade-card>div em{font-size:8px;color:var(--cyan);font-style:normal}
+.upgrade-card>strong{font-size:9px;color:var(--lime);white-space:nowrap}
+.upgrade-card:disabled{opacity:.45;cursor:not-allowed}
+.daily-quest{padding:10px;border:1px solid var(--glass-line);border-radius:12px;background:rgba(23,35,58,.75)}
+.daily-quest.claimed{opacity:.62}
+.daily-quest-top,.daily-quest-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.daily-quest-top b{font-size:9px}
+.daily-quest-top strong{font-size:8px;color:var(--lime)}
+.daily-quest>small{display:block;margin-top:4px;color:var(--muted);font-size:8px}
+.daily-quest .progress-track{height:5px;margin:8px 0 6px}
+.daily-quest-bottom span{font-size:8px;color:var(--muted)}
+.quest-claim{padding:5px 9px;border:1px solid #c7f36b55;border-radius:8px;background:#c7f36b18;color:var(--lime);font:inherit;font-size:8px;cursor:pointer}
+.quest-claim:disabled{opacity:.45;cursor:default}
+body.light .journey-world,body.light .upgrade-card,body.light .daily-quest{background:#fff;border-color:#d5deea}
+@media(max-width:390px){.upgrade-card{grid-template-columns:32px 1fr auto;padding:8px}.journey-world{padding:8px}}
