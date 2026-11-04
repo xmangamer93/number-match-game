@@ -5,7 +5,7 @@
   "description": "Arabic 2048 number merge puzzle game",
   "scripts": {
     "test": "node --test",
-    "android:sync": "mkdir -p www && cp index.html game.html style.css script.js game-engine.js manifest.webmanifest icon.svg sw.js www/ && npx cap sync android"
+    "android:sync": "mkdir -p www && cp index.html game.html style.css script.js game-engine.js mode-engine.js mode-manager.js legendary.js manifest.webmanifest icon.svg sw.js www/ && npx cap sync android"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
