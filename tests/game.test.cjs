@@ -20,3 +20,6 @@ test("tile movement metadata preserves distinct source mapping when compressing"
 
 test("special tile effects follow exact movement and never collide",()=>{const r=G.move([0,2,0,2,...Array(12).fill(0)],"left");const effects=G.mapTileEffects({1:"hammer",3:"bomb"},r.tileMoves);assert.deepEqual(effects,{0:"hammer"});});
 test("special tile effects keep separate destinations after compression",()=>{const r=G.move([0,2,4,0,...Array(12).fill(0)],"left");assert.deepEqual(G.mapTileEffects({1:"hammer",2:"ice"},r.tileMoves),{0:"hammer",1:"ice"});});
+
+test("orthogonal neighbors stay inside board edges without row wrapping",()=>{assert.deepEqual(G.neighbors(0),[1,4]);assert.deepEqual(G.neighbors(3),[2,7]);assert.deepEqual(G.neighbors(12),[13,8]);assert.deepEqual(G.neighbors(15),[14,11]);});
+test("diagonal neighbor lookup returns only in-bounds cells",()=>{assert.deepEqual(G.neighbors(0,true),[1,4,5]);assert.deepEqual(G.neighbors(5,true),[6,4,9,1,10,8,2,0]);});
