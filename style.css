@@ -78,3 +78,9 @@ body.light .utility-drawer>.map-panel,body.light .utility-drawer>.powers-panel,b
 .quest-claim:disabled{opacity:.45;cursor:default}
 body.light .journey-world,body.light .upgrade-card,body.light .daily-quest{background:#fff;border-color:#d5deea}
 @media(max-width:390px){.upgrade-card{grid-template-columns:32px 1fr auto;padding:8px}.journey-world{padding:8px}}
+
+/* Responsive and safe-area hardening */
+body{padding-top:max(18px,env(safe-area-inset-top));padding-right:max(12px,env(safe-area-inset-right));padding-bottom:max(34px,env(safe-area-inset-bottom));padding-left:max(12px,env(safe-area-inset-left))}
+button,a{-webkit-tap-highlight-color:transparent}button{touch-action:manipulation}.board{width:100%;max-width:100%;touch-action:none}.cell{min-width:0;overflow:hidden}.utility-drawer>summary{min-height:48px;cursor:pointer}
+@media(orientation:landscape) and (max-height:620px){body{padding-top:max(8px,env(safe-area-inset-top));padding-bottom:max(12px,env(safe-area-inset-bottom))}.app{width:min(920px,100%)}.game-section{max-width:560px;margin-inline:auto}.board-frame{max-width:min(82vw,460px);margin-inline:auto}.board{gap:6px}.cell{font-size:clamp(16px,4vh,28px)}.top{margin-bottom:8px}.world-hero{padding:10px;margin-bottom:7px}.stats{margin-bottom:6px}.mode-panel{padding:9px;margin-bottom:7px}}
+@media(max-width:340px){.stats{gap:5px}.stat{padding:8px 6px}.stat span{font-size:8px}.stat strong{font-size:18px}.world-hero{gap:7px}.boss-card{min-width:82px;padding:8px}.controls{gap:5px}.primary-button,.secondary-button{font-size:9px;min-height:42px}}
