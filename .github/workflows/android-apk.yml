@@ -10,6 +10,7 @@ on:
       - 'game-engine.js'
       - 'mode-engine.js'
       - 'mode-manager.js'
+      - 'progression-engine.js'
       - 'tests/**'
       - 'package.json'
       - 'sw.js'
@@ -50,11 +51,11 @@ jobs:
       - name: Run game tests
         run: npm test
       - name: Check JavaScript syntax
-        run: node --check script.js && node --check game-engine.js && node --check mode-engine.js && node --check mode-manager.js && node --check legendary.js
+        run: node --check script.js && node --check game-engine.js && node --check mode-engine.js && node --check mode-manager.js && node --check progression-engine.js && node --check legendary.js
       - name: Prepare Capacitor web assets
         run: |
           mkdir -p www
-          cp index.html game.html style.css script.js legendary.js game-engine.js mode-engine.js mode-manager.js manifest.webmanifest icon.svg sw.js www/
+          cp index.html game.html style.css script.js legendary.js game-engine.js mode-engine.js mode-manager.js progression-engine.js manifest.webmanifest icon.svg sw.js www/
       - name: Add Android platform
         run: npx cap add android
       - name: Sync Android project
