@@ -17,3 +17,6 @@ test("invalid direction and malformed boards are rejected",()=>{assert.throws(()
 test("random generator values are safely clamped",()=>{const b=Array(16).fill(0);assert.equal(G.spawn(b,()=>-10)[0],2);const c=Array(16).fill(0);assert.equal(G.spawn(c,()=>10)[15],4);});
 test("tile movement metadata maps each source tile to its exact destination",()=>{const input=[0,2,0,2,...Array(12).fill(0)];const r=G.move(input,"left");assert.deepEqual(r.board.slice(0,4),[4,0,0,0]);assert.deepEqual(r.tileMoves,[{sources:[1,3],destination:0,merged:true,value:4}]);});
 test("tile movement metadata preserves distinct source mapping when compressing",()=>{const input=[0,2,4,0,...Array(12).fill(0)];const r=G.move(input,"left");assert.deepEqual(r.tileMoves,[{sources:[1],destination:0,merged:false,value:2},{sources:[2],destination:1,merged:false,value:4}]);});
+
+test("special tile effects follow exact movement and never collide",()=>{const r=G.move([0,2,0,2,...Array(12).fill(0)],"left");const effects=G.mapTileEffects({1:"hammer",3:"bomb"},r.tileMoves);assert.deepEqual(effects,{0:"hammer"});});
+test("special tile effects keep separate destinations after compression",()=>{const r=G.move([0,2,4,0,...Array(12).fill(0)],"left");assert.deepEqual(G.mapTileEffects({1:"hammer",2:"ice"},r.tileMoves),{0:"hammer",1:"ice"});});
