@@ -10,3 +10,42 @@
 .mode-status p{margin:0;color:#b9c7dc;font-size:9px;line-height:1.7}.mode-status strong{flex:0 0 auto;color:var(--lime);font-size:15px;font-variant-numeric:tabular-nums}
 body.light .mode-panel{background:#fff}body.light .mode-option{background:#f5f8fc;color:#263650;border-color:#d5deea}body.light .mode-option.active{background:#eaf6d7;border-color:#9ac34a}body.light .mode-status{background:#f4f7fb;border-color:#d5deea}body.light .mode-status p{color:#52647c}
 @media(max-width:390px){.mode-options{gap:5px}.mode-option{padding:9px 3px}.mode-option b{font-size:8px}.mode-option small{font-size:6px}}
+
+/* UI/UX refresh: quieter glass surfaces, clearer board hierarchy */
+:root{--panel-glass:rgba(17,27,46,.76);--glass-line:rgba(155,190,225,.16)}
+body{background:radial-gradient(ellipse at 50% -12%,rgba(75,125,190,.2),transparent 48%),linear-gradient(160deg,#080d1a,#0a1020 58%,#090e1b)}
+.ambient{opacity:.055;filter:blur(22px)}
+.world-hero,.stat,.resource-bar,.mode-panel,.mission,.map-panel,.powers-panel,.missions-panel,.achievements-panel,.how-to,.board-frame{background-color:var(--panel-glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--glass-line)}
+.world-hero{background-image:linear-gradient(125deg,rgba(38,66,104,.52),rgba(14,23,41,.78))}
+.game-heading{margin-top:17px}.game-heading h2{font-size:20px}
+.board-frame{padding:clamp(9px,2.5vw,13px);border-radius:25px;background:linear-gradient(145deg,rgba(33,49,75,.9),rgba(13,22,39,.95));border:1px solid rgba(153,190,225,.22);box-shadow:0 24px 64px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.08)}
+.board{gap:clamp(6px,1.8vw,9px)}
+.cell{border-radius:clamp(10px,2.7vw,15px);background:rgba(105,128,160,.17);border-color:rgba(180,205,235,.1);box-shadow:inset 0 1px rgba(255,255,255,.04),inset 0 -3px rgba(0,0,0,.12);transition:filter .16s}
+.cell[data-v="2"]{background:linear-gradient(145deg,#e8ffb0,#c8ec78)}
+.cell[data-v="4"]{background:linear-gradient(145deg,#baf4c0,#82d99a)}
+.cell[data-v="8"]{background:linear-gradient(145deg,#9cf1e4,#58cdbf)}
+.cell[data-v="16"]{background:linear-gradient(145deg,#9ce4ff,#65bce7)}
+.cell[data-v="32"]{background:linear-gradient(145deg,#b4c5ff,#8199ed)}
+.cell[data-v="64"]{background:linear-gradient(145deg,#d0baff,#a18be8)}
+.mode-option,.power-card,.stage-node,.secondary-button{transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease}
+.mode-option:hover,.power-card:hover,.stage-node:not(:disabled):hover{border-color:rgba(199,243,107,.65);transform:translateY(-1px)}
+.utility-drawer{margin:0 0 9px;border:1px solid var(--glass-line);border-radius:16px;background:var(--panel-glass);overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.utility-drawer>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;cursor:pointer;user-select:none}
+.utility-drawer>summary::-webkit-details-marker{display:none}
+.utility-drawer>summary>span:first-child b{display:block;font-size:11px}
+.utility-drawer>summary>span:first-child small{display:block;margin-top:3px;color:var(--muted);font-size:8px}
+.drawer-action{display:flex;align-items:center;gap:8px;color:var(--lime);font-size:9px}
+.drawer-action i{font-style:normal;font-size:15px;transition:transform .18s}
+.utility-drawer[open] .drawer-action i{transform:rotate(45deg)}
+.utility-drawer>.map-panel,.utility-drawer>.powers-panel,.utility-drawer>.missions-panel,.utility-drawer>.achievements-panel{margin:0;border:0;border-top:1px solid var(--glass-line);border-radius:0;background:transparent;box-shadow:none}
+.game-fx{position:absolute;inset:0;z-index:4;overflow:hidden;pointer-events:none;border-radius:inherit}
+.fx-particle{position:absolute;left:var(--x);top:var(--y);width:var(--size);height:var(--size);border-radius:50%;background:var(--particle-color);box-shadow:0 0 10px var(--particle-color);animation:particleBurst var(--duration) cubic-bezier(.12,.7,.25,1) forwards}
+.fx-particle.spark{width:3px;height:12px;border-radius:3px}
+.board-frame.screen-shake{animation:screenShake .28s cubic-bezier(.36,.07,.19,.97)}
+.board-frame.combo-flash{box-shadow:0 0 0 1px rgba(199,243,107,.38),0 0 32px rgba(199,243,107,.16),0 24px 64px rgba(0,0,0,.32)}
+@keyframes particleBurst{0%{opacity:0;transform:translate3d(0,0,0) scale(.3) rotate(0)}12%{opacity:1}100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) scale(.05) rotate(220deg)}}
+@keyframes screenShake{0%,100%{transform:translate3d(0,0,0)}20%{transform:translate3d(-3px,1px,0)}40%{transform:translate3d(3px,-1px,0)}60%{transform:translate3d(-2px,0,0)}80%{transform:translate3d(2px,1px,0)}}
+body.light .utility-drawer{background:rgba(255,255,255,.82);border-color:#d5deea}
+body.light .utility-drawer>.map-panel,body.light .utility-drawer>.powers-panel,body.light .utility-drawer>.missions-panel,body.light .utility-drawer>.achievements-panel{background:transparent}
+@media(max-width:390px){.utility-drawer>summary{padding:11px 12px}.board-frame{border-radius:21px}.game-heading{margin-top:12px}}
+@media(prefers-reduced-motion:reduce){.fx-particle,.board-frame.screen-shake,.board-frame.combo-flash{animation:none!important}}
