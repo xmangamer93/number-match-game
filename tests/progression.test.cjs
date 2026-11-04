@@ -32,3 +32,6 @@ test("daily quest progress is capped and reward can only be claimed once",()=>{
  const first=P.claimDaily(state,q.id);assert.equal(first.ok,true);assert.equal(first.reward,q.reward);
  const second=P.claimDaily(first.state,q.id);assert.equal(second.ok,false);assert.equal(second.reward,0);
 });
+
+test("daily normalization repairs malformed saved quest data",()=>{const broken={date:"2026-11-04",quests:[{id:"unknown",progress:999,claimed:false}]};const fixed=P.normalizeDaily(broken,new Date(2026,10,4));assert.equal(fixed.quests.length,3);assert.equal(new Set(fixed.quests.map(q=>q.id)).size,3);});
+test("upgrade rejects invalid coin balances and clamps malformed levels",()=>{assert.equal(P.upgrade({hammer:0},"hammer",NaN).ok,false);const r=P.upgrade({hammer:-4},"hammer",100);assert.equal(r.ok,true);assert.equal(r.levels.hammer,1);});
