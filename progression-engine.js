@@ -26,5 +26,7 @@ function upgradeCost(id,level){const d=upgradeDefs.find(x=>x.id===id);return d?d
 function upgrade(levels,id,coins){const current=Number(levels?.[id])||0,cost=upgradeCost(id,current);if(!upgradeDefs.some(x=>x.id===id)||current>=5||coins<cost)return{ok:false,levels:{...levels},coins};return{ok:true,levels:{...levels,[id]:current+1},coins:coins-cost,cost}}
 function progressDaily(state,events){const next={...state,quests:state.quests.map(q=>({...q}))};for(const q of next.quests){if(q.claimed)continue;const amount=Number(events[q.id])||0;q.progress=Math.min(q.target,q.progress+Math.max(0,amount))}return next}
 function claimDaily(state,id){const quests=state.quests.map(q=>({...q})),q=quests.find(x=>x.id===id);if(!q||q.claimed||q.progress<q.target)return{ok:false,state:{...state,quests},reward:0};q.claimed=true;return{ok:true,state:{...state,quests},reward:q.reward}}
-const api={worlds,stages,upgradeDefs,quests,dayKey,daily,normalizeDaily,upgradeCost,upgrade,progressDaily,claimDaily};\nif(typeof module!=="undefined"&&module.exports)module.exports=api;\nroot.NumberLabProgression=api;
+const api={worlds,stages,upgradeDefs,quests,dayKey,daily,normalizeDaily,upgradeCost,upgrade,progressDaily,claimDaily};
+if(typeof module!=="undefined"&&module.exports)module.exports=api;
+root.NumberLabProgression=api;
 })(typeof window!=="undefined"?window:globalThis);
