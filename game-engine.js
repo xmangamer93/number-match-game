@@ -21,7 +21,8 @@
   }
   return{board:out,score:gained,changed:out.some((v,i)=>v!==board[i]),merged,merges,tileMoves};
  }
+ function mapTileEffects(effects,tileMoves){const next={};for(const move of tileMoves||[]){const source=(move.sources||[]).find(index=>Object.prototype.hasOwnProperty.call(effects||{},index));if(source!==undefined&&Number.isInteger(move.destination)&&move.destination>=0&&move.destination<16&&!Object.prototype.hasOwnProperty.call(next,move.destination))next[move.destination]=effects[source]}return next;}
  function canMove(board){validate(board);return board.some(v=>!v)||board.some((v,i)=>i%4<3&&v===board[i+1])||board.some((v,i)=>i<12&&v===board[i+4]);}
  function won(board,target=2048){validate(board);return board.some(v=>v>=target);}
- const api={empty,spawn,initial,move,canMove,won};if(typeof module!=="undefined"&&module.exports)module.exports=api;root.Number2048=api;
+ const api={empty,spawn,initial,move,mapTileEffects,canMove,won};if(typeof module!=="undefined"&&module.exports)module.exports=api;root.Number2048=api;
 })(typeof window!=="undefined"?window:globalThis);
