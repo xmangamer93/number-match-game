@@ -49,3 +49,9 @@ body.light .utility-drawer{background:rgba(255,255,255,.82);border-color:#d5deea
 body.light .utility-drawer>.map-panel,body.light .utility-drawer>.powers-panel,body.light .utility-drawer>.missions-panel,body.light .utility-drawer>.achievements-panel{background:transparent}
 @media(max-width:390px){.utility-drawer>summary{padding:11px 12px}.board-frame{border-radius:21px}.game-heading{margin-top:12px}}
 @media(prefers-reduced-motion:reduce){.fx-particle,.board-frame.screen-shake,.board-frame.combo-flash{animation:none!important}}
+
+/* Audio & haptic preference controls */
+.feedback-controls{display:flex;align-items:center;gap:7px}
+.feedback-button{font-size:19px;display:grid;place-items:center}
+.feedback-button[aria-pressed="false"]{opacity:.58;color:var(--muted);border-style:dashed}
+@media(max-width:390px){.feedback-controls{gap:5px}.feedback-button,.icon-button{width:39px;height:39px}}
