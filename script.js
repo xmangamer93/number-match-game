@@ -10,7 +10,7 @@ if(required.some(id=>!$(id)))throw new Error("عناصر واجهة اللعبة
 for(const [key,value] of Object.entries(save.powerMap||{})){const index=Number(key),power=powers.find(item=>item.id===value?.id);if(Number.isInteger(index)&&index>=0&&index<16&&board[index]&&power)powerMap[index]=power;}
 function load(){try{const value=JSON.parse(localStorage.getItem(KEY)||"{}");return value&&typeof value==="object"&&!Array.isArray(value)?value:{}}catch(_){return{}}}
 function safeNumber(value){const n=Number(value);return Number.isFinite(n)&&n>=0?n:0}
-function safeBoard(value){return Array.isArray(value)&&value.length===16&&value.every(v=>Number.isInteger(v)&&v>=0&&(v===0||Number.isInteger(Math.log2(v))))}
+function safeBoard(value){return Array.isArray(value)&&value.length===16&&value.every(v=>Number.isInteger(v)&&Number.isSafeInteger(v)&&v>=0&&(v===0||Number.isInteger(Math.log2(v))))}
 function safeUpgrades(value){const out={hammer:0,shuffle:0,multiplier:0};for(const id of Object.keys(out)){const n=Number(value?.[id]);out[id]=Number.isInteger(n)?Math.max(0,Math.min(5,n)):0}return out}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({board,score,best,moves,stage,coins,combo,maxCombo,wonShown,powerMap,freezeNext,achievements,upgradeLevels,dailyState,unlockedStage,undo:save.undo||null}))}catch(_){} }
 function stageInfo(){return stages[Math.max(0,Math.min(stage,stages.length)-1)]}
