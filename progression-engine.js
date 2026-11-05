@@ -1,0 +1,32 @@
+"use strict";
+(function(root){
+const worlds=[
+{id:1,name:"وادي البدايات",icon:"🌱",stages:[{target:64,name:"بوابة البداية",boss:"حارس الصفر"},{target:128,name:"وادي النبض",boss:"ملك الأربعات"},{target:256,name:"مدينة النبض",boss:"قائد 128"},{target:512,name:"المتاهة البنفسجية",boss:"ظل 256"},{target:1024,name:"قلعة الذهب",boss:"حارس 512"}]},
+{id:2,name:"مجرة الطاقة",icon:"🌌",stages:[{target:2048,name:"بوابة المجرة",boss:"حارس النجم"},{target:4096,name:"سديم الأرقام",boss:"العملاق 2048"},{target:8192,name:"قلب المجرة",boss:"تنين الطاقة"},{target:16384,name:"عرش الكواكب",boss:"ملك المدارات"},{target:32768,name:"بوابة الثقب",boss:"حارس الثقب"}]},
+{id:3,name:"البعد الأسطوري",icon:"💎",stages:[{target:65536,name:"الشفق الأزلي",boss:"ظل اللانهاية"},{target:131072,name:"معبد الخلود",boss:"الكاهن الأعظم"},{target:262144,name:"قلب الخلود",boss:"حارس الزمن"},{target:524288,name:"عرش الأساطير",boss:"العملاق الأزلي"},{target:1048576,name:"نهاية الرحلة",boss:"المختبر الأعظم"}]}
+];
+const stages=worlds.flatMap((w,wi)=>w.stages.map((s,si)=>({...s,id:wi*5+si+1,world:w.id,worldName:w.name,worldIcon:w.icon})));
+const upgradeDefs=[
+{id:"hammer",name:"مطرقة التكسير",icon:"🔨",description:"توسّع نطاق التكسير حول البلاطة",base:100},
+{id:"shuffle",name:"إعادة الترتيب",icon:"🔀",description:"تعيد توزيع الأرقام مع مكافأة أكبر",base:120},
+{id:"multiplier",name:"مضاعفة النقاط",icon:"✨",description:"تزيد النقاط المكتسبة من كل دمج",base:150}
+];
+const quests=[
+{id:"moves",name:"خطوات ثابتة",description:"نفّذ 15 حركة صحيحة",target:15,reward:45},
+{id:"merges",name:"صياد الدمج",description:"ادمج 8 بلاطات",target:8,reward:55},
+{id:"score",name:"جامع النقاط",description:"اجمع 500 نقطة في الدمج",target:500,reward:60},
+{id:"combo",name:"سلسلة متوهجة",description:"حقق كومبو ×4 مرة واحدة",target:1,reward:70},
+{id:"coins",name:"منجم الطاقة",description:"اجمع 40 عملة",target:40,reward:50},
+{id:"power",name:"خبير القوى",description:"استخدم قوة خاصة مرتين",target:2,reward:65}
+];
+function dayKey(date=new Date()){return [date.getFullYear(),String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-")}
+function daily(date=new Date()){const key=dayKey(date),seed=Number(key.replace(/-/g,""))||1;return{date:key,quests:Array.from({length:3},(_,i)=>{const q=quests[(seed+i*7)%quests.length];return{...q,progress:0,claimed:false}}),streak:0}}
+function normalizeDaily(value,date=new Date()){if(!value||value.date!==dayKey(date)||!Array.isArray(value.quests)||value.quests.length!==3)return daily(date);const ids=value.quests.map(q=>q?.id);if(new Set(ids).size!==3||ids.some(id=>!quests.some(q=>q.id===id)))return daily(date);return{date:value.date,streak:0,quests:value.quests.map(q=>{const base=quests.find(item=>item.id===q.id);return{...base,progress:Math.max(0,Math.min(base.target,Number.isFinite(Number(q.progress))?Number(q.progress):0)),claimed:!!q.claimed}})}}
+function upgradeCost(id,level){const d=upgradeDefs.find(x=>x.id===id),current=Number(level);return d&&Number.isInteger(current)&&current>=0&&current<5?d.base*(current+1)*(current+1):Infinity}
+function upgrade(levels,id,coins){const validCoins=Number.isSafeInteger(Number(coins))?Math.max(0,Number(coins)):0,currentRaw=Number(levels?.[id]),current=Number.isInteger(currentRaw)?Math.max(0,Math.min(5,currentRaw)):0,cost=upgradeCost(id,current);if(!upgradeDefs.some(x=>x.id===id)||current>=5||validCoins<cost)return{ok:false,levels:{...levels},coins:validCoins};return{ok:true,levels:{...levels,[id]:current+1},coins:validCoins-cost,cost}}
+function progressDaily(state,events){const next={...state,quests:state.quests.map(q=>({...q}))};for(const q of next.quests){if(q.claimed)continue;const amount=Number(events[q.id])||0;q.progress=Math.min(q.target,q.progress+Math.max(0,amount))}return next}
+function claimDaily(state,id){const quests=state.quests.map(q=>({...q})),q=quests.find(x=>x.id===id);if(!q||q.claimed||q.progress<q.target)return{ok:false,state:{...state,quests},reward:0};q.claimed=true;return{ok:true,state:{...state,quests},reward:q.reward}}
+const api={worlds,stages,upgradeDefs,quests,dayKey,daily,normalizeDaily,upgradeCost,upgrade,progressDaily,claimDaily};
+if(typeof module!=="undefined"&&module.exports)module.exports=api;
+root.NumberLabProgression=api;
+})(typeof window!=="undefined"?window:globalThis);
