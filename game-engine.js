@@ -1,7 +1,7 @@
 "use strict";
 (function(root){
  const DIRECTIONS=["left","right","up","down"];
- function validate(board){if(!Array.isArray(board)||board.length!==16||board.some(v=>!Number.isInteger(v)||v<0||(v!==0&&!Number.isInteger(Math.log2(v))))){throw new TypeError("Board must contain 16 non-negative power-of-two integers");}}
+ function validate(board){if(!Array.isArray(board)||board.length!==16||board.some(v=>!Number.isSafeInteger(v)||v<0||(v!==0&&!Number.isInteger(Math.log2(v))))){throw new TypeError("Board must contain 16 non-negative power-of-two integers");}}
  function randomUnit(random){const value=Number(random());return Number.isFinite(value)?Math.min(.999999,Math.max(0,value)):0;}
  function spawn(board,random=Math.random){validate(board);const free=[];board.forEach((v,i)=>{if(v===0)free.push(i)});if(!free.length)return board.slice();const out=board.slice();const pick=Math.floor(randomUnit(random)*free.length);out[free[pick]]=randomUnit(random)<.9?2:4;return out;}
  function empty(){return Array(16).fill(0);}
