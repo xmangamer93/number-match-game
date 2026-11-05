@@ -60,3 +60,15 @@ test("mode manager resets game once and its resetRound does not recurse into gam
  window.NumberLabModes.resetRound();
  assert.equal(window.resetCalls,1);
 });
+
+
+test("first-merge achievement requires a real merge and is not granted by wild power",()=>{
+ const script=fs.readFileSync(path.join(root,"script.js"),"utf8");
+ assert.match(script,/if\(result\.merges\.length\)unlock\(["']first["']\)/);
+ assert.doesNotMatch(script,/p\.id===["']wild["'][^}]*unlock\(["']first["']\)/);
+});
+
+test("stage achievement is evaluated after stage advancement",()=>{
+ const script=fs.readFileSync(path.join(root,"script.js"),"utf8");
+ assert.match(script,/const stageAdvanced=advanceStage\(\);if\(unlockedStage>=3\)unlock\(["']stage["']\)/);
+});
