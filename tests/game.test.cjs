@@ -23,3 +23,7 @@ test("special tile effects keep separate destinations after compression",()=>{co
 
 test("orthogonal neighbors stay inside board edges without row wrapping",()=>{assert.deepEqual(G.neighbors(0),[1,4]);assert.deepEqual(G.neighbors(3),[2,7]);assert.deepEqual(G.neighbors(12),[13,8]);assert.deepEqual(G.neighbors(15),[14,11]);});
 test("diagonal neighbor lookup returns only in-bounds cells",()=>{assert.deepEqual(G.neighbors(0,true),[1,4,5]);assert.deepEqual(G.neighbors(5,true),[6,4,9,1,10,8,2,0]);});
+
+test("board validation accepts safe powers of two and rejects unsafe bitwise false positives",()=>{assert.doesNotThrow(()=>G.move([2**31,...Array(15).fill(0)],"left"));assert.throws(()=>G.move([2**32,...Array(15).fill(0)],"left"),/Board/);});
+test("hammer targeting expands symmetrically at every upgrade tier",()=>{assert.deepEqual(G.hammerTargets(0,0),[0]);assert.deepEqual(G.hammerTargets(0,1),[0,1,4]);assert.deepEqual(G.hammerTargets(0,2),[0,1,4,5]);assert.deepEqual(G.hammerTargets(0,3),[0,1,2,4,5,8]);assert.deepEqual(G.hammerTargets(0,4),[0,1,2,4,5,6,8,9,10]);assert.deepEqual(G.hammerTargets(0,5),Array.from({length:16},(_,i)=>i));});
+test("hammer target lookup rejects invalid cell indexes",()=>{assert.throws(()=>G.hammerTargets(16,1),/index/);});
